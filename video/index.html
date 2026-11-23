@@ -1,0 +1,464 @@
+<title>Riemann, explicado despacio</title>
+<meta name="description" content="La hipótesis de Riemann explicada despacio, en 10 capítulos con voz: primos, Gauss, la zeta, el plano complejo, los ceros, las ondas y el estado actual.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Newsreader:ital,opsz,wght@1,6..72,500;1,6..72,600&display=swap" rel="stylesheet">
+<style>
+/* Una sola escena oscura tipo pizarra: lienzo vertical 9:16 centrado; tinta azul = primos, naranja = Gauss y ondas, verde = la línea ½ */
+:root{--bg:#05070f;--ink:#f3efe6;--muted:#9aa3c0;--acc:#ff7a3d;--btn:rgba(255,255,255,.14);color-scheme:dark}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;overflow:hidden}
+.st{position:absolute;left:50%;top:50%;width:960px;height:540px;transform-origin:50% 50%}
+.st canvas{position:absolute;inset:0;width:960px;height:540px;display:block}
+.tap{position:absolute;top:96px;bottom:0;width:35%;cursor:pointer;z-index:2}.tap.l{left:0}.tap.r{right:0}
+.ctl{position:absolute;right:16px;top:44px;display:flex;gap:8px;z-index:3}
+.ctl button{width:44px;height:44px;border-radius:50%;border:0;background:var(--btn);color:var(--ink);font:700 17px/1 system-ui;cursor:pointer}
+.play{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:14px;padding:0 28px 90px;background:linear-gradient(transparent 35%,rgba(5,7,15,.94) 72%)}
+.play .go{font:850 26px/1 "Archivo";font-stretch:80%;text-transform:uppercase;border:0;border-radius:999px;padding:20px 30px;background:var(--acc);color:#fff;cursor:pointer}
+.play p{margin:0;font:500 14px/1.3 "Archivo";color:var(--muted);text-align:center}
+.end{position:absolute;left:28px;right:28px;top:690px;z-index:3;display:flex;justify-content:center}
+.end[hidden],.play[hidden]{display:none}
+.end a{font:800 19px/1 "Archivo";text-decoration:none;border-radius:999px;padding:15px 22px;background:var(--acc);color:#fff}
+button:focus-visible,.end a:focus-visible{outline:3px solid #fff;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.play{background:rgba(5,7,15,.9)}}
+</style>
+<div class="st" id="stage" role="img" aria-label="Vídeo explicativo sobre la hipótesis de Riemann">
+ <canvas id="cv" width="1920" height="1080"></canvas>
+ <div class="tap l" id="tapl" aria-hidden="true"></div><div class="tap r" id="tapr" aria-hidden="true"></div>
+ <div class="ctl" id="ctl"><button type="button" id="b-pp" aria-label="Pausa">❚❚</button><button type="button" id="b-snd" aria-label="Quitar sonido">🔊</button></div>
+ <div class="play" id="play"><button type="button" class="go" id="b-go">▶ Ver la historia</button><p>10 minutos · con voz · toca a los lados para avanzar o volver</p></div>
+</div>
+<script>
+(()=>{
+const TL = [{"id":"c01a","cap":0,"texto":"2, 3, 5, 7, 11, 13. Son los números primos: los que solo se pueden dividir entre uno y entre sí mismos.","start":3.1,"dur":7.102},{"id":"c01b","cap":0,"texto":"Parecen sueltos, sin ningún patrón. Y no son un juego de matemáticos. Con ellos se protegen las compras por internet, los mensajes del móvil y las claves del banco.","start":10.752,"dur":8.85},{"id":"c01c","cap":0,"texto":"En 1859, un matemático alemán, Bernhard Riemann, escribió una frase que sigue sin demostrar. Si es cierta, los primos tienen un orden escondido. Te la voy a explicar paso a paso.","start":20.152,"dur":11.471},{"id":"c02a","cap":1,"texto":"Riemann no intentó adivinar cada primo. Hizo una pregunta más sencilla: hasta un número cualquiera, ¿cuántos primos hay?","start":35.273,"dur":6.552},{"id":"c02b","cap":1,"texto":"Vamos contando. Hasta el 10 hay 4: el 2, el 3, el 5 y el 7. Hasta el 40, 12. Hasta el 100, 25.","start":42.375,"dur":8.251},{"id":"c02c","cap":1,"texto":"Si lo dibujas, sale una escalera. Cada primo es un escalón de la misma altura. Pero mira el ancho: unos escalones son cortos y otros muy largos. Los primos llegan cuando quieren.","start":51.176,"dur":10.342},{"id":"c02d","cap":1,"texto":"Y otra cosa. La escalera se va tumbando. Cuanto más avanzas, más escasos son los primos.","start":62.068,"dur":5.503},{"id":"c02e","cap":1,"texto":"Ya tenemos lo que queremos medir: la escalera. Ahora nos falta algo con qué compararla. Y aquí aparece Gauss.","start":68.121,"dur":6.291},{"id":"c03a","cap":2,"texto":"Con 15 años, Carl Friedrich Gauss se dio cuenta de algo. Cerca de un número x, más o menos 1 de cada «logaritmo de x» números es primo. Cerca del 100, eso da unos 2 primos por cada decena.","start":78.062,"dur":11.194},{"id":"c03b","cap":2,"texto":"Si vas sumando esa probabilidad número a número, sale una curva lisa. Los matemáticos la llaman Li de x, y es la predicción de Gauss.","start":89.806,"dur":7.584},{"id":"c03c","cap":2,"texto":"¿Funciona? Muy bien. Hasta un millón hay 78.498 primos. La curva de Gauss dice 78.627. Se equivoca en unos 130, un 0,16 %. Es poquísimo. Pero siempre se equivoca algo.","start":97.94,"dur":16.208},{"id":"c03d","cap":2,"texto":"Y la gran pregunta es esta: ¿cuánto se puede llegar a equivocar, como mucho? Ahí es donde entra Riemann.","start":114.698,"dur":5.542},{"id":"c03e","cap":2,"texto":"Para responderla, Riemann necesitaba una herramienta que llevara dentro a todos los primos a la vez. Esa herramienta es la función zeta.","start":120.791,"dur":7.081},{"id":"c04a","cap":3,"texto":"Riemann usó una función que ya conocía Euler. Se llama zeta, y es una suma infinita: 1, más 1/2 elevado a s, más 1/3 elevado a s, y así para siempre.","start":131.521,"dur":9.527},{"id":"c04b","cap":3,"texto":"Si s vale 2, la suma da 1,6449, que es exactamente pi al cuadrado entre 6. Euler lo descubrió en 1734.","start":141.598,"dur":8.717},{"id":"c04c","cap":3,"texto":"Pero lo mejor es otra cosa. Euler vio que esa misma suma se puede escribir como un producto, con un factor por cada número primo. La zeta está hecha de primos.","start":150.866,"dur":8.45},{"id":"c04d","cap":3,"texto":"¿Por qué funciona? Porque cada número se escribe de una sola manera como producto de primos. El 12 es 2 por 2 por 3, y nada más. Al multiplicar los factores de todos los primos aparecen, uno por uno, todos los números, cada uno una sola vez. Por eso la suma y el producto son la misma cosa.","start":159.865,"dur":16.361},{"id":"c04x","cap":3,"texto":"Se puede ver como una criba. Si multiplicas la suma por 1 menos 1/2 elevado a s, desaparecen todos los términos pares: el 2, el 4, el 6. Si luego lo haces con el 3, se van sus múltiplos. Y cuando has pasado por todos los primos, solo queda el 1.","start":176.776,"dur":15.094},{"id":"c04e","cap":3,"texto":"Y eso es la clave de todo: cualquier cosa que descubras de la zeta es, en el fondo, información sobre los primos.","start":192.42,"dur":5.652},{"id":"c04f","cap":3,"texto":"Eso sí, tiene un problema. Si s vale 1, la suma crece sin parar, y por debajo de 1 ni siquiera tiene sentido. Es un muro. Y la información que buscamos está justo detrás.","start":198.622,"dur":10.258},{"id":"c05a","cap":4,"texto":"Para saltar el muro, Riemann hizo algo genial. Dejó que s fuera un número complejo, con dos partes: una parte real, sigma, y una parte imaginaria, t.","start":212.529,"dur":8.784},{"id":"c05b","cap":4,"texto":"¿Qué cambia? Que cada término de la suma se convierte en una flecha. Sigma decide cuánto mide la flecha. T decide hacia dónde apunta.","start":221.863,"dur":7.613},{"id":"c05c","cap":4,"texto":"Sumar la serie es encadenar flechas. Con t igual a 0, todas apuntan al mismo lado. Pero en cuanto t no es cero, cada flecha gira un poco más que la anterior, y la cadena se enrosca sobre sí misma.","start":230.026,"dur":10.711},{"id":"c05d","cap":4,"texto":"Un ejemplo con números. Tomamos sigma 0,5 y t 14,13. En x igual a 100, el tamaño es la raíz de 100, o sea 10, y el giro deja la parte real en menos 6,4. En x igual a 400, el tamaño es 20, y la parte real, menos 19,8.","start":241.287,"dur":16.456},{"id":"c05e","cap":4,"texto":"¿Y por qué hacen falta giros? Porque los primos llegan a saltos, y para dibujar saltos con curvas lisas hacen falta oscilaciones. Las oscilaciones las pone t. Y lo grandes que son, las pone sigma.","start":258.293,"dur":11.341},{"id":"c05f","cap":4,"texto":"Tú quédate con la idea: sigma controla el tamaño, t controla el giro. Lo vamos a necesitar enseguida.","start":270.184,"dur":5.654},{"id":"c06a","cap":5,"texto":"Ahora hay que cruzar el muro. El truco es fácil de contar. Si alternas los signos, 1 menos 1/2 más 1/3 menos 1/4, las flechas se van compensando y la suma vuelve a tener sentido más allá del muro. De esa serie alterna se despeja la zeta. Así, Riemann la pudo calcular en toda una franja entre 0 y 1.","start":279.488,"dur":18.17},{"id":"c06b","cap":5,"texto":"Y ahí dentro la zeta se hace cero en puntos muy concretos. El primero está a la altura 14,13. El segundo, a 21,02. El tercero, a 25,01. Son los famosos ceros de Riemann.","start":298.209,"dur":13.035},{"id":"c06x","cap":5,"texto":"Ojo, no hay que confundirlos con otros. La zeta también vale cero en menos 2, menos 4, menos 6, y así siempre. Son los ceros triviales: están sobre el eje real, fuera de la franja, y no esconden nada sobre los primos.","start":311.793,"dur":12.914},{"id":"c06y","cap":5,"texto":"Los ceros de Riemann son los otros, los no triviales, y ninguno está en el eje. En la altura 0, la línea del medio vale menos 1,46, no cero. Además van por parejas: si hay uno a la altura 14,13, hay otro a menos 14,13.","start":325.257,"dur":14.502},{"id":"c06z","cap":5,"texto":"Mira ahora qué pasa si subimos por la línea del medio. A la izquierda, un punto sube por la línea. A la derecha, dibujamos el valor de la zeta en ese punto. La curva da vueltas, y justo cuando el punto llega a 14,13, pasa por el centro: la zeta vale cero. Vuelve a pasar en 21,02, y en 25,01. Cada paso por el centro es un cero.","start":340.309,"dur":20.828},{"id":"c06w","cap":5,"texto":"Y fíjate en una cosa. Es la cadena de flechas del capítulo 5, con los signos alternos. En un cero, la cadena termina justo en el centro.","start":361.687,"dur":7.999},{"id":"c06c","cap":5,"texto":"Ahora fíjate dónde caen. Todos, exactamente, en la línea del medio, donde sigma vale 0,5. Se han calculado unos 10 billones de ceros, y ni uno solo se sale de la línea.","start":370.236,"dur":10.088},{"id":"c06d","cap":5,"texto":"¿Y por qué nos importan tanto los ceros? Porque la fórmula que une la zeta con los primos se construye justo con ellos. Es lo que vamos a ver ahora.","start":380.874,"dur":7.879},{"id":"c07a","cap":6,"texto":"¿Y qué tienen que ver los ceros con los primos? Aquí está la magia. Riemann encontró una fórmula exacta. Dice que la escalera de los primos es igual a la curva lisa de Gauss más una onda por cada cero.","start":392.404,"dur":11.011},{"id":"c07b","cap":6,"texto":"Y cada onda es la potencia del capítulo 5: x elevado al cero. Su tamaño es x elevado a sigma. Su giro, t por el logaritmo de x. Es la misma cuenta que hicimos con el 100 y el 400.","start":403.965,"dur":12.238},{"id":"c07c","cap":6,"texto":"Cada onda tiene dos datos. La altura del cero, t, decide dónde oscila: dónde caen los escalones. Y la parte real, sigma, decide cuánto: cuánto se aparta la escalera de la curva lisa.","start":416.752,"dur":10.654},{"id":"c07d","cap":6,"texto":"Mira lo que pasa al sumarlas. Con 1 onda, la curva apenas se mueve. Con 10, ya se insinúan los escalones. Con 50, la curva lisa se ha convertido casi en la escalera exacta de los primos.","start":427.957,"dur":11.337},{"id":"c07x","cap":6,"texto":"Visto de otra forma: si sumas solo las oscilaciones de los ceros, salen picos justo en los primos. En el 2, el 3, el 5, el 7, el 11. Y también en sus potencias, como el 4, el 8 o el 9.","start":439.843,"dur":11.793},{"id":"c07e","cap":6,"texto":"Los primos, que parecían sueltos, son la suma de las ondas de los ceros.","start":452.187,"dur":3.784},{"id":"c08a","cap":7,"texto":"Y ahora sí, la hipótesis de Riemann. Dice que todos los ceros están en la línea del medio, todos con sigma 0,5.","start":459.62,"dur":7},{"id":"c08b","cap":7,"texto":"¿Por qué importa tanto? Porque sigma es el volumen de cada onda. Y cuando sumas muchas ondas, a la larga manda la que tiene más volumen, la del sigma más grande. Por eso el error de Gauss crece como x elevado a ese sigma.","start":467.171,"dur":12.194},{"id":"c08c","cap":7,"texto":"Si todos valen 0,5, ninguna onda se dispara, y el error queda siempre por debajo de raíz de x por logaritmo de x. Es el error más pequeño posible. Lo demostró von Koch en 1901: decir que todos los ceros están en la línea y decir que el error de Gauss es mínimo es exactamente lo mismo.","start":479.915,"dur":16.605},{"id":"c08d","cap":7,"texto":"Pero ojo. Si hubiera un solo cero con sigma 0,8, su onda crecería mucho más deprisa. En 1 millón, en vez de un error de unos 1.000, tendríamos uno de 63.000. El orden de los primos se vendría abajo.","start":497.07,"dur":12.332},{"id":"c08e","cap":7,"texto":"Y no vendría solo. Por una simetría que demostró el propio Riemann, cada cero fuera de la línea trae un gemelo reflejado al otro lado.","start":509.952,"dur":7.128},{"id":"c09a","cap":8,"texto":"¿Qué se sabe? En 1896, Hadamard y de la Vallée Poussin demostraron que todos los ceros están dentro de la franja, y con eso, que la curva de Gauss acierta a la larga. Después se demostró que más del 40 % de los ceros están en la línea.","start":520.729,"dur":13.74},{"id":"c09b","cap":8,"texto":"En octubre de 2026, una inteligencia artificial de OpenAI presentó una prueba de que todos los ceros están entre 1/8 y 7/8. Los expertos todavía la están revisando.","start":535.02,"dur":10.181},{"id":"c09c","cap":8,"texto":"Pero la línea exacta, la del medio, sigue sin demostrar. El Instituto Clay ofrece un millón de dólares a quien lo consiga.","start":545.751,"dur":6.577},{"id":"c09x","cap":8,"texto":"Y una aclaración importante. Demostrar la hipótesis no es encontrar todos los ceros, porque son infinitos. Es demostrar que ninguno, por alto que esté, se sale de la línea.","start":552.878,"dur":9.388},{"id":"c10a","cap":9,"texto":"Repasemos. Los primos construyen la zeta. La zeta, llevada al plano complejo, tiene ceros. Cada cero produce una onda. Y las ondas, sumadas, dibujan la escalera de los primos.","start":565.916,"dur":11.163},{"id":"c10b","cap":9,"texto":"La hipótesis de Riemann dice que todas esas ondas tienen el volumen más bajo posible. Desde 1859, nadie ha podido demostrarlo. Tienes la explicación completa, con todos los gráficos para tocar, en el enlace.","start":577.629,"dur":12.504}];
+const CARDS = [{"start":0,"end":2.8},{"start":32.173,"end":34.973},{"start":74.962,"end":77.762},{"start":128.421,"end":131.221},{"start":209.429,"end":212.229},{"start":276.388,"end":279.188},{"start":389.304,"end":392.104},{"start":456.52,"end":459.32},{"start":517.629,"end":520.429},{"start":562.816,"end":565.616}];
+const TOTAL = 594.68;
+const VIDEO = /[?&]video\b/.test(location.search);
+const S = {}; TL.forEach(x => S[x.id] = x);
+const st = id => S[id].start, en = id => S[id].start + S[id].dur;
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const eo = x => 1 - Math.pow(1 - clamp(x), 3);
+const eb = x => { x = clamp(x); const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const es = (v, d = 0) => v.toLocaleString("es-ES", { minimumFractionDigits: d, maximumFractionDigits: d });
+
+/* ---------- tiempos de cada palabra ---------- */
+const PUN = /[.,:;?!]$/;
+TL.forEach(L => {
+  const words = L.texto.split(/\s+/);
+  const w = words.map(x => x.length + 1.5 + (PUN.test(x) ? (/[,:;]$/.test(x) ? 4 : 7) : 0));
+  const tot = w.reduce((a, b) => a + b, 0), usable = L.dur - 0.3; let acc = 0.1;
+  L.words = words.map((x, i) => { const s = L.start + acc; acc += w[i] / tot * usable; return { x, s }; });
+  L.chunks = []; let cur = [];
+  L.words.forEach((wd, i) => { cur.push(i); if (cur.length >= 9 || (PUN.test(wd.x) && cur.length >= 3) || i === L.words.length - 1) { L.chunks.push(cur); cur = []; } });
+});
+const norm = s => s.replace(/[.,:;?!¿¡«»]/g, "").toLowerCase();
+const wt = (id, tok) => { const L = S[id]; const w = L.words.find(w => norm(w.x) === tok) || L.words.find(w => norm(w.x).includes(tok)); return w ? w.s : L.start; };
+
+/* ---------- matemáticas ---------- */
+const M = 1000, sv = new Uint8Array(M + 1); sv[0] = sv[1] = 1;
+for (let i = 2; i * i <= M; i++) if (!sv[i]) for (let j = i * i; j <= M; j += i) sv[j] = 1;
+const isP = n => n >= 2 && !sv[n];
+const PI = new Int32Array(M + 1); for (let n = 1; n <= M; n++) PI[n] = PI[n - 1] + (isP(n) ? 1 : 0);
+const LI = new Float64Array(M + 1); LI[2] = 1.0451637801; for (let n = 3; n <= M; n++) LI[n] = LI[n - 1] + 0.5 * (1 / Math.log(n - 1) + 1 / Math.log(n));
+const liAt = x => { if (x <= 2) return 0; const f = Math.floor(x); return LI[f] + (x - f) / Math.log(x); };
+const NB = 60, DB = [1]; { let tm = 1; for (let i = 1; i <= NB; i++) { tm *= 4 * (NB + i - 1) * (NB - i + 1) / ((2 * i) * (2 * i - 1)); DB[i] = DB[i - 1] + tm; } }
+function zeta(sig, t) {
+  let er = 0, ei = 0;
+  for (let k = 0; k < NB; k++) { const c = (k % 2 ? -1 : 1) * (DB[k] - DB[NB]), l = Math.log(k + 1), m = Math.exp(-sig * l); er += c * m * Math.cos(t * l); ei -= c * m * Math.sin(t * l); }
+  er /= -DB[NB]; ei /= -DB[NB];
+  const A = Math.pow(2, 1 - sig), l2 = Math.log(2), dr = 1 - A * Math.cos(t * l2), di = A * Math.sin(t * l2), dd = dr * dr + di * di;
+  return [(er * dr + ei * di) / dd, (ei * dr - er * di) / dd];
+}
+const ZEROS = [14.134725,21.02204,25.010858,30.424876,32.935062,37.586178,40.918719,43.327073,48.005151,49.773832,52.970321,56.446248,59.347044,60.831779,65.112544,67.079811,69.546402,72.067158,75.704691,77.14484,79.337375,82.910381,84.735493,87.425275,88.809111,92.491899,94.651344,95.870634,98.831194,101.317851,103.725538,105.446623,107.168611,111.029536,111.874659,114.320221,116.22668,118.790783,121.370125,122.946829,124.256819,127.516684,129.578704,131.087688,133.497737,134.75651,138.116042,139.736209,141.123707,143.111846];
+const ZABS = []; for (let t = 0; t <= 50.001; t += 0.05) { const z = zeta(0.5, t); ZABS.push([t, Math.hypot(z[0], z[1])]); }
+const ZHALF = []; for (let t = 0; t <= 30.5; t += 0.02) { const z = zeta(0.5, t); ZHALF.push([t, z[0], z[1]]); }
+const lam = n => { for (let p = 2; p <= n; p++) if (n % p === 0) { let m = n; while (m % p === 0) m /= p; return m === 1 ? Math.log(p) : 0; } return 0; };
+const PSI = [0, 0]; { let a = 0; for (let n = 1; n <= 100; n++) { a += lam(n); PSI[n] = a; } }
+const smooth = x => x - Math.log(2 * Math.PI) - 0.5 * Math.log(1 - 1 / (x * x));
+const wave = (x, s, g) => { const L = Math.log(x); return -2 * Math.pow(x, s) * (s * Math.cos(g * L) + g * Math.sin(g * L)) / (s * s + g * g); };
+const chain = (sig, t, N, alt) => { const P = [[0, 0]]; let re = 0, im = 0; for (let n = 1; n <= N; n++) { const r = (alt && n % 2 === 0 ? -1 : 1) * Math.pow(n, -sig), a = -t * Math.log(n); re += r * Math.cos(a); im += r * Math.sin(a); P.push([re, im]); } return P; };
+
+/* ---------- lienzo 960 × 540 (×2) ---------- */
+const cv = $("cv"), ctx = cv.getContext("2d");
+const COL = { bg: "#0e1020", panel: "#151a33", line: "rgba(255,255,255,.09)", ink: "#f3efe6", muted: "#9aa3c0", blue: "#4f9cff", orange: "#ff7a3d", teal: "#2fe0a8", red: "#ff4d5e", dim: "#2a3152", dark: "#0b0e1d" };
+function font(size, { w = 800, cond = true, serif = false } = {}) { ctx.font = serif ? `italic 600 ${size}px "Newsreader", Georgia, serif` : `${w} ${size}px "Archivo", system-ui, sans-serif`; ctx.fontStretch = cond && !serif ? "condensed" : "normal"; }
+function text(s, x, y, size, color = COL.ink, o = {}) { font(size, o); ctx.fillStyle = color; ctx.textAlign = o.align || "left"; ctx.textBaseline = "alphabetic"; ctx.fillText(s, x, y); }
+function wrap(s, x, y, maxW, size, lh, color, o = {}) { font(size, o); const words = s.split(" "); let line = "", yy = y; ctx.fillStyle = color; ctx.textAlign = "left"; for (const w of words) { const test = line ? line + " " + w : w; if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, yy); line = w; yy += lh; } else line = test; } ctx.fillText(line, x, yy); return yy + lh; }
+function rr(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function withA(a, fn) { if (a <= 0.001) return; ctx.save(); ctx.globalAlpha *= a; fn(); ctx.restore(); }
+const win = (t, a, b, fi = 0.5, fo = 0.4) => Math.min(eo((t - a) / fi), eo((b - t) / fo));
+const fadeIn = (t, a, d = 0.5) => eo((t - a) / d);
+function popIn(t, a, fn, { sc = 0.5, rot = 0, cx = 330, cy = 270, dur = 0.5 } = {}) { const k = clamp((t - a) / dur); if (k <= 0) return; ctx.save(); ctx.globalAlpha *= clamp(k * 2.5); ctx.translate(cx, cy); const s = sc + (1 - sc) * eb(k); ctx.scale(s, s); ctx.rotate(rot * Math.PI / 180); ctx.translate(-cx, -cy); fn(); ctx.restore(); }
+function pill(s, cx, cy, size, bg, fg = "#fff") { font(size); const w = ctx.measureText(s).width + 28; rr(cx - w / 2, cy - size * 0.85, w, size * 1.35, 10); ctx.fillStyle = bg; ctx.fill(); text(s, cx, cy + size * 0.1, size, fg, { align: "center" }); }
+function sticker(s, cx, cy, size, bg, t, a, rot = -3) { popIn(t, a, () => pill(s.toUpperCase(), cx, cy, size, bg), { sc: 0.3, rot, cx, cy }); }
+function panel(x, y, w, h) { rr(x, y, w, h, 16); ctx.fillStyle = COL.panel; ctx.fill(); }
+function axes(B, xr, yr, { xl = "", yl = "", xt = [], yt = [], fx = v => es(v) } = {}) {
+  const X = v => B.x + (v - xr[0]) / (xr[1] - xr[0]) * B.w, Y = v => B.y + B.h - (v - yr[0]) / (yr[1] - yr[0]) * B.h;
+  ctx.strokeStyle = COL.line; ctx.lineWidth = 1;
+  yt.forEach(v => { ctx.beginPath(); ctx.moveTo(B.x, Y(v)); ctx.lineTo(B.x + B.w, Y(v)); ctx.stroke(); text(fx(v), B.x - 7, Y(v) + 4, 12, COL.muted, { align: "right", w: 600 }); });
+  xt.forEach(v => text(fx(v), X(v), B.y + B.h + 17, 12, COL.muted, { align: "center", w: 600 }));
+  if (xl) text(xl, B.x + B.w, B.y + B.h + 33, 13, COL.muted, { align: "right", w: 600, cond: false });
+  if (yl) text(yl, B.x, B.y - 9, 13, COL.muted, { w: 600, cond: false });
+  return { X, Y };
+}
+function path(pts, X, Y, color, w = 2.5, dash) { if (!pts.length) return; ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.stroke(); ctx.setLineDash([]); }
+function stairs(xmax, X, Y, F, color, w = 2.5) { ctx.beginPath(); ctx.moveTo(X(0), Y(0)); let y = 0; for (let n = 1; n <= Math.floor(xmax); n++) { const ny = F(n); if (ny !== y) { ctx.lineTo(X(n), Y(y)); ctx.lineTo(X(n), Y(ny)); y = ny; } } ctx.lineTo(X(xmax), Y(y)); ctx.strokeStyle = color; ctx.lineWidth = w; ctx.stroke(); }
+function dot(x, y, r, c) { ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fillStyle = c; ctx.fill(); }
+function arrowLine(x1, y1, x2, y2, c, w = 2.5, head = 9) { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); const a = Math.atan2(y2 - y1, x2 - x1); ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - head * Math.cos(a - 0.45), y2 - head * Math.sin(a - 0.45)); ctx.moveTo(x2, y2); ctx.lineTo(x2 - head * Math.cos(a + 0.45), y2 - head * Math.sin(a + 0.45)); ctx.stroke(); }
+function strip(x0, x1, y0, y1, { band, labels = true } = {}) {
+  const X = s => x0 + s * (x1 - x0);
+  rr(x0, y1, x1 - x0, y0 - y1, 8); ctx.fillStyle = "rgba(255,255,255,.05)"; ctx.fill();
+  if (band) { ctx.fillStyle = band.c; ctx.fillRect(X(band.a), y1, X(band.b) - X(band.a), y0 - y1); }
+  ctx.setLineDash([6, 5]); ctx.strokeStyle = COL.teal; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(0.5), y1); ctx.lineTo(X(0.5), y0); ctx.stroke(); ctx.setLineDash([]);
+  if (labels) { text("σ = 0", X(0), y0 + 18, 12, COL.muted, { align: "center", w: 600 }); text("½", X(0.5), y0 + 20, 17, COL.teal, { align: "center" }); text("σ = 1", X(1), y0 + 18, 12, COL.muted, { align: "center", w: 600 }); }
+  return X;
+}
+const L = { x: 24, y: 96, w: 600, h: 350 };   // zona del dibujo
+const VIS = (t, a, b) => win(t, a, b);
+
+/* ---------- capítulos y pizarra ---------- */
+const CAPS = ["La pregunta", "La escalera", "Gauss", "La zeta", "El plano complejo", "Los ceros", "Las ondas", "La hipótesis", "Hoy", "Todo junto"];
+const capStart = CARDS.map(c => c.start), capEnd = CAPS.map((_, i) => i < CAPS.length - 1 ? capStart[i + 1] : TOTAL);
+const firstOf = c => TL.find(x => x.cap === c), lastOf = c => [...TL].reverse().find(x => x.cap === c);
+const capA = c => firstOf(c).start - 0.3, capB = c => lastOf(c).start + lastOf(c).dur + 0.4;
+const NOTES = [
+  [0, ["c01a", "primos", "Primo: solo se divide entre 1 y entre sí mismo."], ["c01b", "protegen", "Sostienen el cifrado de internet."], ["c01c", "1859", "1859: Riemann escribe su hipótesis."]],
+  [1, ["c02a", "cuántos", "π(x) = cuántos primos hay hasta x."], ["c02b", "100", "π(10) = 4 · π(40) = 12 · π(100) = 25"], ["c02c", "ancho", "Escalones iguales en altura, irregulares en ancho."], ["c02d", "escasos", "Cuanto más lejos, más escasos."]],
+  [2, ["c03a", "decena", "Cerca de x, 1 de cada ln x es primo."], ["c03b", "li", "Li(x): sumar esa densidad."], ["c03c", "130", "Hasta 1 millón: error ≈ 130 (0,16 %)."], ["c03d", "mucho", "La pregunta: ¿error máximo?"]],
+  [3, ["c04a", "infinita", "ζ(s) = 1 + 1/2ˢ + 1/3ˢ + …"], ["c04b", "16449", "ζ(2) = π²/6 = 1,6449"], ["c04c", "producto", "ζ(s) = ∏ 1/(1 − p⁻ˢ): un factor por primo."], ["c04d", "12", "Cada número es un producto único de primos."], ["c04x", "criba", "Criba: quitar los múltiplos de cada primo deja solo el 1."], ["c04f", "muro", "En s = 1 la suma explota: el muro."]],
+  [4, ["c05a", "complejo", "s = σ + i·t"], ["c05b", "flecha", "Cada término: flecha de largo n^−σ y giro t·ln n."], ["c05d", "100", "x^ρ = x^σ · giro(t·ln x)"], ["c05e", "oscilaciones", "Saltos ⇒ hacen falta oscilaciones."], ["c05f", "tamaño", "σ → tamaño · t → giro"]],
+  [5, ["c06a", "alternas", "Serie alterna: cruza el muro."], ["c06b", "1413", "Ceros: 14,13 · 21,02 · 25,01 …"], ["c06x", "triviales", "Triviales: −2, −4, −6… en el eje. No cuentan."], ["c06y", "parejas", "Los de Riemann: fuera del eje, por parejas ±t."], ["c06z", "centro", "Subiendo por ½, ζ pasa por 0 en cada cero."],["c06c", "medio", "Todos en σ = ½ (10 billones calculados)."], ["c06d", "fórmula", "Los ceros construyen la fórmula de los primos."]],
+  [6, ["c07a", "onda", "Escalera = curva de Gauss + una onda por cero."], ["c07b", "tamaño", "Onda = x^ρ: tamaño x^σ, giro t·ln x."], ["c07c", "dónde", "t → dónde · σ → cuánto."], ["c07d", "50", "50 ondas ≈ la escalera exacta."], ["c07x", "picos", "Solo las oscilaciones: picos en los primos."]],
+  [7, ["c08a", "medio", "Hipótesis: todos los ceros en σ = ½."], ["c08b", "volumen", "Manda la onda de σ más grande."], ["c08c", "koch", "σ = ½ ⇔ error ≤ √x · ln x (von Koch, 1901)."], ["c08d", "63000", "Un cero en 0,8 → error de 63.000 en 10⁶."], ["c08e", "gemelo", "Cada cero fuera trae un gemelo."]],
+  [8, ["c09a", "1896", "1896: ceros dentro de la franja ⇒ teorema de los números primos."], ["c09a", "40", "Más del 40 % de los ceros, en la línea."], ["c09b", "openai", "2026: prueba de OpenAI (1/8 a 7/8), en revisión."], ["c09c", "dólares", "La línea ½: sin demostrar. Premio Clay: 1 millón $."], ["c09x", "infinitos", "Demostrar ≠ encontrar todos: son infinitos."]],
+  [9, ["c10a", "repasemos", "Primos → zeta → ceros → ondas → primos."], ["c10b", "volumen", "Hipótesis: volumen mínimo para todas las ondas."]]
+];
+function pizarra(t) {
+  const c = CAPS.findIndex((_, i) => t >= capStart[i] && t < capEnd[i]); if (c < 0) return;
+  const A = win(t, capA(c), capB(c)); if (A <= 0) return;
+  withA(A, () => {
+    panel(640, 96, 296, 350);
+    text("LO QUE LLEVAMOS", 658, 122, 14, COL.muted);
+    let y = 150;
+    // como mucho las 5 últimas notas, para que no se salgan de la pizarra
+    NOTES[c].slice(1).filter(([id, tok]) => t >= wt(id, tok)).slice(-5).forEach(([id, tok, s]) => { const k = fadeIn(t, wt(id, tok), 0.6); if (k <= 0) return; withA(k, () => { dot(664, y - 5, 4, COL.orange); y = wrap(s, 676, y, 246, 17, 22, COL.ink, { w: 600, cond: false }) + 8; }); });
+  });
+}
+function card(t) {
+  CARDS.forEach((cd, i) => {
+    const A = win(t, cd.start, cd.end, 0.35, 0.35); if (A <= 0) return;
+    withA(A, () => { ctx.fillStyle = COL.bg; ctx.fillRect(0, 50, 960, 490);
+      const k = eo((t - cd.start) / 0.6);
+      text(`CAPÍTULO ${i + 1} DE ${CAPS.length}`, 480, 230 - (1 - k) * 12, 20, COL.orange, { align: "center" });
+      text(CAPS[i].toUpperCase(), 480, 300 + (1 - k) * 12, 64, COL.ink, { align: "center" });
+      if (i > 0) text("Venimos de: " + CAPS[i - 1].toLowerCase(), 480, 345, 18, COL.muted, { align: "center", w: 600, cond: false }); });
+  });
+}
+
+/* ---------- escenas por capítulo ---------- */
+function c1(t) {
+  const A = VIS(t, capA(0), capB(0)); if (A <= 0) return;
+  withA(A, () => {
+    const g = win(t, capA(0), st("c01c") - 0.1);
+    withA(g, () => { const first = ["2", "3", "5", "7", "11", "13"].map(k => wt("c01a", k)), after = wt("c01a", "primos"); let pi = 0;
+      for (let n = 1; n <= 30; n++) { const c = (n - 1) % 10, r = Math.floor((n - 1) / 10), x = 40 + c * 57, y = 120 + r * 66; let lit = 0;
+        if (isP(n)) { const tt = pi < 6 ? first[pi] : after + (pi - 6) * 0.15; pi++; lit = clamp((t - tt) / 0.25); }
+        rr(x, y, 50, 56, 8); ctx.fillStyle = lit > 0 ? `rgba(79,156,255,${0.25 + 0.75 * lit})` : COL.dim; ctx.fill(); text(String(n), x + 25, y + 36, 22, lit > 0.5 ? "#fff" : COL.muted, { align: "center" }); }
+      const k = fadeIn(t, wt("c01b", "protegen"));
+      withA(k, () => ["Compras por internet", "Mensajes del móvil", "Claves del banco"].forEach((s, i) => { withA(fadeIn(t, wt("c01b", ["compras", "mensajes", "banco"][i])), () => { rr(40 + i * 196, 340, 184, 56, 12); ctx.fillStyle = COL.dark; ctx.fill(); ctx.strokeStyle = COL.teal; ctx.lineWidth = 1.5; ctx.stroke(); text("🔒", 56 + i * 196, 375, 18, COL.teal); text(s, 82 + i * 196, 374, 17, COL.ink, { w: 700 }); }); })); });
+    withA(fadeIn(t, st("c01c")), () => { popIn(t, st("c01c") + 0.1, () => text("1859", 324, 250, 120, COL.ink, { align: "center" }), { cx: 324, cy: 210 });
+      withA(fadeIn(t, wt("c01c", "riemann")), () => text("Bernhard Riemann escribe una frase…", 324, 300, 24, COL.muted, { align: "center", w: 600, cond: false }));
+      sticker("sin demostrar", 324, 370, 26, COL.orange, t, wt("c01c", "demostrar")); });
+  });
+}
+function c2(t) {
+  const A = VIS(t, capA(1), capB(2)); if (A <= 0) return;
+  withA(A, () => {
+    panel(L.x, L.y, L.w, L.h);
+    const B = { x: 70, y: 122, w: 530, h: 270 }; const { X, Y } = axes(B, [0, 100], [0, 28], { xl: "número x", yl: "primos contados π(x)", xt: [0, 10, 25, 40, 50, 75, 100], yt: [0, 10, 20] });
+    const k10 = wt("c02b", "10"), k40 = wt("c02b", "40"), k100 = wt("c02b", "100");
+    let xm = 0; if (t < st("c02b")) xm = 0; else if (t < k40) xm = lerp(0, 10, eo((t - st("c02b")) / Math.max(0.5, k10 - st("c02b")))); else if (t < k100) xm = lerp(10, 40, eo((t - k40 + 0.8) / 0.9)); else xm = lerp(40, 100, eo((t - k100 + 0.4) / 1.4));
+    if (t > capA(2)) xm = 100;
+    if (xm > 0) { stairs(xm, X, Y, n => PI[n], COL.blue, 3); for (let p = 2; p <= xm; p++) if (isP(p)) dot(X(p), Y(PI[p]), 3, COL.blue); }
+    [[10, 4, k10], [40, 12, k40], [100, 25, k100]].forEach(([x, v, a]) => withA(fadeIn(t, a) * (t < capA(2) ? 1 : 0), () => { dot(X(x), Y(v), 6, COL.orange); text(`π(${x}) = ${v}`, X(x) - 6, Y(v) - 12, 16, COL.orange, { align: x === 100 ? "right" : "center" }); }));
+    if (t < st("c02b")) withA(fadeIn(t, st("c02a") + 0.5), () => text("¿Cuántos primos hay hasta x?", 335, 270, 30, COL.muted, { align: "center" }));
+    const ga = fadeIn(t, wt("c02c", "ancho")) * (t < capA(2) ? 1 : 0);
+    withA(ga, () => { ctx.strokeStyle = COL.teal; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(X(89), Y(PI[89]) + 10); ctx.lineTo(X(97), Y(PI[89]) + 10); ctx.stroke(); text("hueco de 8", X(93), Y(PI[89]) + 28, 15, COL.teal, { align: "center" });
+      ctx.beginPath(); ctx.moveTo(X(11), Y(PI[11]) + 10); ctx.lineTo(X(13), Y(PI[11]) + 10); ctx.stroke(); text("hueco de 2", X(12), Y(PI[11]) + 28, 15, COL.teal, { align: "center" }); });
+    withA(fadeIn(t, wt("c02d", "tumbando")) * (t < capA(2) ? 1 : 0), () => { ctx.setLineDash([5, 5]); path([[0, 0], [25, 9.5]], X, Y, "rgba(255,255,255,.5)", 1.5); path([[75, 21.5], [100, 25]], X, Y, "rgba(255,255,255,.5)", 1.5); ctx.setLineDash([]); text("empinada", X(14), Y(9), 14, COL.muted, { align: "right", w: 600, cond: false }); text("se tumba", X(88), Y(25.5) - 6, 14, COL.muted, { align: "center", w: 600, cond: false }); });
+    // capítulo 3 sobre la misma gráfica
+    if (t > capA(2)) {
+      const d0 = st("c03a");
+      withA(win(t, d0, st("c03b") + 0.6), () => { // densidad 1/ln t (eje derecho 0–1)
+        const pts = []; for (let x = 2.2; x <= 100; x += 0.5) pts.push([x, 28 * Math.min(1, 1 / Math.log(x))]); path(pts.filter(p => p[0] <= 2 + 98 * eo((t - d0) / 2)), X, Y, COL.orange, 3);
+        text("densidad 1 / ln x", X(60), Y(28 / Math.log(60)) - 12, 15, COL.orange, { align: "center" });
+        withA(fadeIn(t, wt("c03a", "100")), () => { dot(X(100), Y(28 / Math.log(100)), 6, COL.orange); text("en 100: 0,217 → unos 2 por decena", X(100) - 6, Y(28 / Math.log(100)) + 22, 15, COL.orange, { align: "right" }); }); });
+      const g0 = wt("c03b", "curva"), gk = eo((t - g0) / 2.5);
+      if (gk > 0) { const pts = []; for (let x = 2; x <= 2 + 98 * gk; x += 0.5) pts.push([x, liAt(x)]);
+        ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(X(p[0]), Y(p[1])) : ctx.moveTo(X(p[0]), Y(p[1]))); for (let i = pts.length - 1; i >= 0; i--) ctx.lineTo(X(pts[i][0]), Y(PI[Math.floor(pts[i][0])])); ctx.fillStyle = "rgba(255,122,61,.25)"; ctx.fill();
+        path(pts, X, Y, COL.orange, 3.5); if (gk > 0.9) text("Li(x), la curva de Gauss", X(60), Y(liAt(60)) - 14, 16, COL.orange, { align: "right" }); }
+      withA(win(t, st("c03c"), capB(2)), () => { rr(70, 300, 330, 92, 12); ctx.fillStyle = COL.dark; ctx.fill(); text("HASTA 1.000.000", 88, 326, 14, COL.muted); text("78.498 primos reales", 88, 352, 20, COL.blue); text("78.627 según Gauss", 88, 378, 20, COL.orange);
+        withA(fadeIn(t, wt("c03c", "130")), () => pill("ERROR ≈ 130 · 0,16 %", 520, 350, 18, COL.teal, "#06281d")); });
+      sticker("¿error máximo?", 480, 160, 26, COL.orange, t, wt("c03d", "mucho"), 3);
+    }
+  });
+}
+function c4(t) {
+  const A = VIS(t, capA(3), capB(3)); if (A <= 0) return;
+  withA(A, () => {
+    panel(L.x, L.y, L.w, L.h);
+    const fA = win(t, st("c04a"), st("c04f") - 0.1);
+    withA(fA, () => {
+      const terms = ["ζ(s) = 1", "+ 1/2ˢ", "+ 1/3ˢ", "+ 1/4ˢ", "+ …"]; font(34, { serif: true }); const ws = terms.map(s => ctx.measureText(s + " ").width); let x = 324 - ws.reduce((p, c) => p + c, 0) / 2;
+      terms.forEach((s, i) => { const k = fadeIn(t, wt("c04a", "suma") + i * 0.35, 0.4) * (1 - win(t, st("c04x") - 0.2, st("c04e") - 0.1, 0.3, 0.3)); withA(k,() => text(s, x, 150, 34, COL.ink, { serif: true })); x += ws[i]; });
+      // ζ(2): sumas parciales
+      withA(win(t, st("c04b"), st("c04c") + 0.2), () => { const B = { x: 80, y: 190, w: 500, h: 200 }; const { X, Y } = axes(B, [0, 30], [0, 1.8], { xl: "términos sumados", xt: [1, 10, 20, 30], yt: [0, 1, 1.6449], fx: v => es(v, v % 1 ? 4 : 0) });
+        ctx.setLineDash([5, 4]); path([[0, Math.PI ** 2 / 6], [30, Math.PI ** 2 / 6]], X, Y, COL.teal, 1.5); ctx.setLineDash([]);
+        const N = Math.floor(30 * eo((t - st("c04b") - 0.3) / 3)); let s = 0; for (let n = 1; n <= N; n++) { s += 1 / (n * n); rr(X(n) - 6, Y(s), 12, Y(0) - Y(s), 2); ctx.fillStyle = COL.blue; ctx.fill(); }
+        withA(fadeIn(t, wt("c04b", "pi")), () => text("π²/6 = 1,6449", X(29), Y(1.6449) - 10, 18, COL.teal, { align: "right" })); });
+      withA(fadeIn(t, st("c04c") + 0.4) * (t < st("c04d") ? 1 : t < st("c04x") - 0.3 ? 0.35 : 0), () => { text("= ∏ 1 / (1 − p⁻ˢ)", 324, 220, 34, COL.blue, { serif: true, align: "center" }); text("= 1/(1−2⁻ˢ) · 1/(1−3⁻ˢ) · 1/(1−5⁻ˢ) · …", 324, 260, 22, COL.muted, { serif: true, align: "center" }); text("un factor por cada primo", 324, 292, 16, COL.muted, { align: "center", w: 600, cond: false }); });
+      withA(win(t, st("c04d"), st("c04x") - 0.1), () => { const rows = [[4, "2 · 2"], [6, "2 · 3"], [12, "2 · 2 · 3"], [15, "3 · 5"], [18, "2 · 3 · 3"]];
+        rows.forEach(([n, f], i) => withA(fadeIn(t, (i === 2 ? wt("c04d", "12") : st("c04d") + 0.4 + i * 0.5)), () => { rr(110, 318 + i * 0, 0, 0, 0); text(`${n} = ${f}`, 110 + (i % 3) * 170, 335 + Math.floor(i / 3) * 34, 22, i === 2 ? COL.orange : COL.ink, { serif: true }); })); });
+      // la criba: multiplicar por (1 − p⁻ˢ) quita los múltiplos de p; al final solo queda el 1
+      withA(win(t, st("c04x"), st("c04e") - 0.1), () => {
+        const PR = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29], tp = p => p === 2 ? wt("c04x", "pares") : p === 3 ? wt("c04x", "3") : wt("c04x", "pasado") + (PR.indexOf(p) - 2) * 0.22;
+        const lpf = n => PR.find(p => n % p === 0);
+        const done = PR.filter(p => t >= tp(p)); const last = done[done.length - 1];
+        const head = !last ? "ζ(s) = 1 + 1/2ˢ + 1/3ˢ + 1/4ˢ + …" : last === 2 ? "(1 − 1/2ˢ) · ζ(s) = 1 + 1/3ˢ + 1/5ˢ + 1/7ˢ + …" : last === 3 ? "(1 − 1/2ˢ)(1 − 1/3ˢ) · ζ(s) = 1 + 1/5ˢ + 1/7ˢ + …" : t < wt("c04x", "queda") ? "(1 − 1/2ˢ)(1 − 1/3ˢ)(1 − 1/5ˢ)… · ζ(s) = 1 + …" : "∏ (1 − 1/pˢ) · ζ(s) = 1   ⇒   ζ(s) = ∏ 1/(1 − p⁻ˢ)";
+        text(head, 324, 136, last && t >= wt("c04x", "queda") ? 22 : 21, last ? COL.blue : COL.ink, { serif: true, align: "center" });
+        for (let n = 1; n <= 30; n++) { const c = (n - 1) % 6, r = Math.floor((n - 1) / 6), x = 66 + c * 88, y = 160 + r * 54;
+          const p = lpf(n), k = n > 1 && t >= tp(p) ? clamp((t - tp(p)) / 0.45) : 0;
+          const glow = n === 1 ? fadeIn(t, wt("c04x", "queda")) : 0;
+          withA(1 - 0.85 * k, () => { rr(x, y, 76, 44, 8); ctx.fillStyle = k > 0 && k < 1 ? `rgba(255,77,94,${0.6 * (1 - k) + 0.1})` : glow > 0 ? `rgba(47,224,168,${0.25 + 0.6 * glow})` : COL.dim; ctx.fill();
+            text(n === 1 ? "1" : `1/${n}ˢ`, x + 38, y + 29, 19, glow > 0.5 ? "#fff" : COL.ink, { serif: true, align: "center" }); }); }
+        if (last && last !== 2 && last !== 3) withA(fadeIn(t, wt("c04x", "pasado")), () => text(`quitando los múltiplos de ${last}`, 324, 444, 14, COL.muted, { align: "center", w: 600, cond: false })); });
+      withA(win(t, st("c04e"), st("c04f") - 0.1), () => { text("ζ(s) = ∏ 1 / (1 − p⁻ˢ)", 324, 250, 34, COL.blue, { serif: true, align: "center" }); pill("ZETA = PRIMOS", 324, 330, 22, COL.teal, "#06281d"); });
+    });
+    withA(fadeIn(t, st("c04f")), () => { const B = { x: 80, y: 130, w: 500, h: 260 }; const { X, Y } = axes(B, [0, 4], [0, 8], { xl: "s (número real)", yl: "ζ(s)", xt: [0, 1, 2, 3, 4], yt: [0, 2, 4, 6, 8] });
+      const pts = []; for (let s = 4; s >= 1.13; s -= 0.01) pts.push([s, zeta(s, 0)[0]]); path(pts.slice(0, Math.floor(pts.length * eo((t - st("c04f")) / 1.6))), X, Y, COL.blue, 3);
+      withA(fadeIn(t, wt("c04f", "muro")), () => { ctx.fillStyle = "rgba(255,77,94,.18)"; ctx.fillRect(X(0), B.y, X(1) - X(0), B.h); ctx.setLineDash([6, 5]); path([[1, 0], [1, 8]], X, Y, COL.red, 2.5); ctx.setLineDash([]); text("EL MURO", X(0.5), Y(4), 26, COL.red, { align: "center" }); text("la suma no sirve", X(0.5), Y(3.3), 14, COL.red, { align: "center", w: 600, cond: false }); }); });
+  });
+}
+function c5(t) {
+  const A = VIS(t, capA(4), capB(4)); if (A <= 0) return;
+  withA(A, () => {
+    panel(L.x, L.y, L.w, L.h);
+    withA(win(t, st("c05a"), st("c05b") + 0.2), () => { const ox = 120, oy = 400; ctx.strokeStyle = COL.muted; ctx.lineWidth = 1.5; arrowLine(ox, oy, 580, oy, COL.muted, 1.5); arrowLine(ox, oy, ox, 130, COL.muted, 1.5);
+      text("parte real σ", 575, oy + 22, 15, COL.muted, { align: "right", w: 600, cond: false }); text("parte imaginaria t", ox + 8, 140, 15, COL.muted, { w: 600, cond: false });
+      const k = fadeIn(t, wt("c05a", "sigma"), 0.6); withA(k, () => { const px = ox + 300 * 0.5 * 1.6, py = oy - 210; ctx.setLineDash([4, 4]); ctx.strokeStyle = COL.orange; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(px, oy); ctx.lineTo(px, py); ctx.lineTo(ox, py); ctx.stroke(); ctx.setLineDash([]); dot(px, py, 8, COL.orange); text("s = σ + i·t", px + 14, py - 8, 26, COL.orange, { serif: true }); }); });
+    // cadena de flechas: t sube de 0 a 8
+    withA(win(t, st("c05b") + 0.1, st("c05d") - 0.1), () => {
+      const tt = t < st("c05c") ? 0 : 8 * eo((t - wt("c05c", "cero") ) / 2.5); const P = chain(0.6, tt, 40, false);
+      const xs = P.map(p => p[0]), ys = P.map(p => p[1]); const mnx = Math.min(0, ...xs), mxx = Math.max(...xs), mny = Math.min(...ys, -0.5), mxy = Math.max(...ys, 0.5);
+      const sc = Math.min(520 / (mxx - mnx), 300 / (mxy - mny)); const X = v => 324 + (v - (mnx + mxx) / 2) * sc, Y = v => 271 - (v - (mny + mxy) / 2) * sc;
+      ctx.strokeStyle = COL.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(40, Y(0)); ctx.lineTo(610, Y(0)); ctx.stroke();
+      const N = t < st("c05c") ? Math.min(3, Math.floor(1 + (t - st("c05b")) / 0.8)) : 40;
+      for (let n = 1; n <= N; n++) arrowLine(X(P[n - 1][0]), Y(P[n - 1][1]), X(P[n][0]), Y(P[n][1]), `hsl(${215 - n * 2},90%,${68 - n * 0.4}%)`, n < 5 ? 3 : 2, n < 12 ? 8 : 0);
+      text(`t = ${es(tt, 1)}`, 600, 130, 22, COL.orange, { align: "right" });
+      withA(fadeIn(t, wt("c05b", "mide")), () => text("largo = n^−σ", 50, 135, 18, COL.blue)); withA(fadeIn(t, wt("c05b", "apunta")), () => text("ángulo = −t · ln n", 50, 160, 18, COL.orange)); });
+    // ejemplo x^ρ
+    withA(win(t, st("c05d"), st("c05e") - 0.1), () => { const B = { x: 80, y: 130, w: 510, h: 200 }; const { X, Y } = axes(B, [2, 420], [-22, 22], { xl: "x", yl: "parte real de x^ρ con ρ = 0,5 + 14,13 i", xt: [2, 100, 200, 300, 400], yt: [-20, 0, 20] });
+      const pts = [], up = [], dn = []; for (let x = 2; x <= 420; x += 0.5) { pts.push([x, Math.sqrt(x) * Math.cos(14.134725 * Math.log(x))]); up.push([x, Math.sqrt(x)]); dn.push([x, -Math.sqrt(x)]); }
+      path(up, X, Y, "rgba(47,224,168,.6)", 1.5, [5, 4]); path(dn, X, Y, "rgba(47,224,168,.6)", 1.5, [5, 4]); path(pts.filter(p => p[0] <= 2 + 418 * eo((t - st("c05d")) / 2.5)), X, Y, COL.blue, 2.5);
+      [[100, -6.37, wt("c05d", "100")], [400, -19.82, wt("c05d", "400")]].forEach(([x, v, a], i) => withA(fadeIn(t, a), () => { dot(X(x), Y(v), 7, COL.orange); rr(i ? 330 : 70, 345, 250, 88, 10); ctx.fillStyle = COL.dark; ctx.fill(); const bx = i ? 345 : 85;
+        text(`x = ${x}`, bx, 370, 18, COL.orange); text(`tamaño √${x} = ${Math.sqrt(x)}`, bx, 393, 16, COL.teal, { w: 600, cond: false }); text(`giro: cos(${es(14.13 * Math.log(x), 2)}) = ${es(Math.cos(14.134725 * Math.log(x)), 3)}`, bx, 413, 16, COL.ink, { w: 600, cond: false }); text(`→ ${es(v, 1)}`, bx + 225, 370, 20, COL.orange, { align: "right" }); }));
+      text("tamaño ±√x", X(330), Y(Math.sqrt(330)) - 8, 14, COL.teal, { align: "center", w: 600, cond: false }); });
+    withA(win(t, st("c05e"), capB(4) + 1), () => { const B = { x: 80, y: 140, w: 510, h: 180 }; const { X, Y } = axes(B, [1, 60], [0, 18], { xl: "x", xt: [10, 20, 30, 40, 50, 60], yt: [0, 10] });
+      stairs(60, X, Y, n => PSI[n] / 3.4, COL.blue, 3); text("saltos", 120, 300, 15, COL.blue);
+      withA(fadeIn(t, wt("c05e", "oscilaciones")), () => { const pts = []; for (let x = 1.6; x <= 60; x += 0.15) { let y = smooth(x); for (let k = 0; k < 8; k++) y += wave(x, 0.5, ZEROS[k]); pts.push([x, y / 3.4]); } path(pts, X, Y, COL.orange, 2.5); text("curva lisa + oscilaciones", 590, 150, 15, COL.orange, { align: "right" }); });
+      withA(fadeIn(t, st("c05f")), () => { pill("σ → TAMAÑO", 210, 380, 24, COL.teal, "#06281d"); pill("t → GIRO", 440, 380, 24, COL.orange); }); });
+  });
+}
+function c6(t) {
+  const A = VIS(t, capA(5), capB(5)); if (A <= 0) return;
+  withA(A, () => {
+    panel(L.x, L.y, L.w, L.h);
+    withA(win(t, st("c06a"), st("c06b") - 0.1), () => { const P = chain(0.5, 0, 40, true); const X = v => 120 + v * 330, Y = () => 200;
+      text("0", X(0), 105, 13, COL.muted, { align: "center" }); text("1", X(1), 105, 13, COL.muted, { align: "center" });
+      const N = Math.floor(1 + 21 * eo((t - wt("c06a", "alternas")) / 3)), yy = n => 112 + n * 7; ctx.beginPath(); ctx.moveTo(X(0), yy(0)); for (let n = 1; n <= N; n++) ctx.lineTo(X(P[n][0]), yy(n)); ctx.strokeStyle = COL.blue; ctx.lineWidth = 2.2; ctx.stroke(); for (let n = 1; n <= N; n++) dot(X(P[n][0]), yy(n), 3.2, n % 2 ? COL.blue : COL.orange);
+      withA(fadeIn(t, wt("c06a", "compensando")), () => { ctx.setLineDash([4, 4]); ctx.strokeStyle = COL.teal; ctx.beginPath(); ctx.moveTo(X(0.6049), 110); ctx.lineTo(X(0.6049), 270); ctx.stroke(); ctx.setLineDash([]); text("se acerca a 0,6049", X(0.6049) + 10, 268, 14, COL.teal); });
+      text("1 − 1/√2 + 1/√3 − 1/√4 + …", 324, 300, 26, COL.ink, { serif: true, align: "center" }); text("los signos alternos se compensan y la suma sí llega a un valor", 324, 328, 15, COL.muted, { align: "center", w: 600, cond: false });
+      withA(fadeIn(t, wt("c06a", "despeja")), () => text("ζ(s) = η(s) / (1 − 2¹⁻ˢ)", 324, 380, 30, COL.teal, { serif: true, align: "center" }));
+      withA(fadeIn(t, wt("c06a", "franja")), () => pill("SE CALCULA EN 0 < σ < 1", 324, 425, 18, COL.dark)); });
+    withA(win(t, st("c06b"), st("c06x") - 0.1), () => { const B = { x: 80, y: 130, w: 510, h: 270 }; const { X, Y } = axes(B, [0, 50], [0, 3.5], { xl: "altura t", yl: "|ζ(½ + it)|", xt: [0, 10, 20, 30, 40, 50], yt: [0, 1, 2, 3] });
+      const tm = 50 * eo((t - st("c06b") - 0.3) / 4); path(ZABS.filter(p => p[0] <= tm).map(p => [p[0], Math.min(3.5, p[1])]), X, Y, COL.teal, 2.5);
+      [["1413", 0, "14,13"], ["2102", 1, "21,02"], ["2501", 2, "25,01"]].forEach(([tok, i, lab]) => { if (ZEROS[i] <= tm) { dot(X(ZEROS[i]), Y(0), 7, COL.orange); withA(fadeIn(t, wt("c06b", tok)), () => text(lab, X(ZEROS[i]), Y(0) - 14 - i * 16, 15, COL.orange, { align: "center" })); } });
+      ZEROS.slice(3).filter(z => z <= tm).forEach(z => dot(X(z), Y(0), 5, COL.orange)); });
+    // mapa del plano: ceros triviales en el eje real, franja, polo en 1 y ceros de Riemann por parejas ±t
+    withA(win(t, st("c06x"), st("c06z") - 0.1), () => { const B = { x: 70, y: 122, w: 530, h: 300 };
+      const X = v => B.x + (v + 7) / 9 * B.w, Y = v => B.y + B.h / 2 - v / 36 * (B.h / 2);
+      ctx.fillStyle = "rgba(255,255,255,.06)"; ctx.fillRect(X(0), B.y, X(1) - X(0), B.h);
+      arrowLine(B.x, Y(0), B.x + B.w, Y(0), COL.muted, 1.5); arrowLine(X(0), B.y + B.h, X(0), B.y, COL.muted, 1.5);
+      text("parte real σ", B.x + B.w, Y(0) + 34, 13, COL.muted, { align: "right", w: 600, cond: false }); text("altura t", X(0) - 8, B.y + 12, 13, COL.muted, { align: "right", w: 600, cond: false });
+      [-6, -4, -2, 0, 1].forEach(v => text(v < 0 ? "−" + (-v) : String(v), X(v), Y(0) + 18, 13, COL.muted, { align: "center", w: 600 }));
+      ctx.setLineDash([5, 4]); path([[0.5, -32], [0.5, 32]], X, Y, COL.teal, 1.8); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(X(1), Y(0), 6, 0, 7); ctx.strokeStyle = COL.red; ctx.lineWidth = 2; ctx.stroke(); text("polo", X(1) + 10, Y(0) - 8, 12, COL.red, { w: 600 });
+      [2, 4, 6].forEach(v => withA(fadeIn(t, wt("c06x", String(v))), () => dot(X(-v), Y(0), 7, COL.blue)));
+      withA(fadeIn(t, wt("c06x", "triviales")), () => { text("ceros triviales", X(-4), Y(0) + 42, 16, COL.blue, { align: "center" }); text("fuera de la franja", X(-4), Y(0) + 60, 13, COL.muted, { align: "center", w: 600, cond: false }); });
+      withA(fadeIn(t, wt("c06x", "franja")), () => text("franja 0 < σ < 1", X(0.5), B.y + B.h + 16, 13, COL.muted, { align: "center", w: 600, cond: false }));
+      const ky = fadeIn(t, st("c06y")), kp = fadeIn(t, wt("c06y", "parejas"));
+      withA(ky, () => { ZEROS.slice(0, 4).forEach(z => { dot(X(0.5), Y(z), 6, COL.orange); text(es(z, 2), X(0.5) + 12, Y(z) + 5, 13, COL.orange, { w: 600 }); }); text("ceros de Riemann (no triviales)", X(0) - 14, Y(24) + 4, 15, COL.orange, { align: "right", w: 700 }); });
+      withA(kp, () => { ZEROS.slice(0, 4).forEach(z => { dot(X(0.5), Y(-z), 6, COL.orange); text("−" + es(z, 2), X(0.5) + 12, Y(-z) + 5, 13, COL.orange, { w: 600 }); }); text("y su pareja, abajo (−t)", X(0) - 14, Y(-22) + 4, 15, COL.orange, { align: "right", w: 700 }); });
+      withA(fadeIn(t, wt("c06y", "146")), () => { ctx.beginPath(); ctx.arc(X(0.5), Y(0), 9, 0, 7); ctx.strokeStyle = COL.ink; ctx.lineWidth = 2; ctx.stroke(); rr(X(0.5) + 18, Y(0) - 52, 196, 34, 8); ctx.fillStyle = COL.dark; ctx.fill(); text("ζ(½) = −1,46 ≠ 0", X(0.5) + 30, Y(0) - 29, 18, COL.ink, { serif: true }); }); });
+    // subir por la línea ½: a la izquierda el punto, a la derecha el valor de ζ, que pasa por el centro en cada cero
+    withA(win(t, st("c06z"), st("c06w") - 0.1), () => {
+      const k0 = wt("c06z", "izquierda"), keys = [[k0, 0], [wt("c06z", "1413"), 14.134725], [wt("c06z", "2102"), 21.02204], [wt("c06z", "2501"), 25.010858], [en("c06z") + 0.3, 30]];
+      let T = 0; for (let i = 0; i < keys.length - 1; i++) if (t >= keys[i][0]) T = lerp(keys[i][1], keys[i + 1][1], clamp((t - keys[i][0]) / (keys[i + 1][0] - keys[i][0])));
+      const y0 = 420, y1 = 130, SX = strip(60, 200, y0, y1, { labels: true }); const SY = v => y0 - v / 32 * (y0 - y1);
+      text("altura t", 210, 140, 13, COL.muted, { w: 600, cond: false });
+      ZEROS.filter(z => z <= T + 0.05).forEach(z => { dot(SX(0.5), SY(z), 5, COL.orange); text(es(z, 2), SX(0.5) + 10, SY(z) + 4, 12, COL.orange, { w: 600 }); });
+      dot(SX(0.5), SY(T), 7, "#fff"); text(`t = ${es(T, 2)}`, 130, 116, 18, COL.ink, { align: "center" });
+      const cx = 400, cy = 280, sc = 52; const PX = v => cx + v * sc, PY = v => cy - v * sc;
+      ctx.strokeStyle = COL.line; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(250, cy); ctx.lineTo(610, cy); ctx.moveTo(cx, 120); ctx.lineTo(cx, 440); ctx.stroke();
+      text("valor de ζ(½ + i·t)", 600, 132, 16, COL.teal, { align: "right" }); text("centro = 0", cx + 8, cy + 18, 12, COL.muted, { w: 600 });
+      const pts = ZHALF.filter(p => p[0] <= T); if (pts.length > 1) { ctx.beginPath(); pts.forEach((p, i) => i ? ctx.lineTo(PX(p[1]), PY(p[2])) : ctx.moveTo(PX(p[1]), PY(p[2]))); ctx.strokeStyle = COL.teal; ctx.lineWidth = 2.2; ctx.stroke(); }
+      const z = zeta(0.5, T); dot(PX(z[0]), PY(z[1]), 6, "#fff");
+      const near = Math.min(...ZEROS.slice(0, 4).map(g => Math.abs(T - g))); if (near < 0.6) { const a = 1 - near / 0.6; withA(a, () => { ctx.beginPath(); ctx.arc(cx, cy, 10 + 14 * a, 0, 7); ctx.strokeStyle = COL.orange; ctx.lineWidth = 3; ctx.stroke(); text("ζ = 0 → CERO", cx + 26, cy - 22, 17, COL.orange); }); } });
+    // la cadena alterna (η) en el primer cero termina en el centro
+    withA(win(t, st("c06w"), st("c06c") - 0.1), () => { const g = 14.134725, P = chain(0.5, g, 90, true); const cx = 330, cy = 290, sc = 150; const X = v => cx + v * sc, Y = v => cy - v * sc;
+      const N = Math.max(1, Math.floor(90 * eo((t - wt("c06w", "cadena")) / 3.2)));
+      ctx.strokeStyle = COL.line; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(60, cy); ctx.lineTo(600, cy); ctx.moveTo(cx, 120); ctx.lineTo(cx, 440); ctx.stroke();
+      for (let n = 1; n <= N; n++) arrowLine(X(P[n - 1][0]), Y(P[n - 1][1]), X(P[n][0]), Y(P[n][1]), `hsl(${215 - n},90%,${70 - n * 0.3}%)`, n < 6 ? 3 : 1.6, n < 10 ? 8 : 0);
+      const e = N > 1 ? [(P[N][0] + P[N - 1][0]) / 2, (P[N][1] + P[N - 1][1]) / 2] : P[1]; dot(X(e[0]), Y(e[1]), 6, COL.orange);
+      text("1 − 1/2ˢ + 1/3ˢ − 1/4ˢ + …   con s = ½ + 14,13 i", 324, 130, 18, COL.ink, { serif: true, align: "center" });
+      withA(fadeIn(t, wt("c06w", "centro")), () => { ctx.beginPath(); ctx.arc(cx, cy, 16, 0, 7); ctx.strokeStyle = COL.teal; ctx.lineWidth = 3; ctx.stroke(); pill("LA CADENA SE CIERRA EN 0", 324, 430, 17, COL.teal, "#06281d"); }); });
+    withA(win(t, st("c06c"), capB(5) + 1), () => { const y0 = 420, y1 = 120, X = strip(160, 480, y0, y1); const Y = z => y0 - z / 145 * (y0 - y1);
+      const t0 = wt("c06c", "caen"); ZEROS.forEach((z, i) => { const k = clamp((t - t0 - i * 0.05) / 0.3); if (k > 0) dot(X(0.5), Y(z) - (1 - eo(k)) * 30, 4, `rgba(255,122,61,${k})`); });
+      text("altura t ↑", 495, 130, 13, COL.muted, { w: 600, cond: false });
+      withA(fadeIn(t, wt("c06c", "billones")), () => pill("10 BILLONES CALCULADOS · NINGUNO FUERA", 324, 115, 15, COL.teal, "#06281d"));
+      withA(fadeIn(t, st("c06d")), () => { arrowLine(500, 270, 600, 270, COL.orange, 3); text("fórmula", 552, 258, 14, COL.orange, { align: "center" }); text("de los primos", 552, 292, 14, COL.orange, { align: "center" }); }); });
+  });
+}
+function c7(t) {
+  const A = VIS(t, capA(6), capB(6)); if (A <= 0) return;
+  withA(A, () => {
+    panel(L.x, L.y, L.w, L.h);
+    withA(win(t, st("c07a"), st("c07c") - 0.1), () => {
+      text("escalera = curva de Gauss + Σ una onda por cada cero", 324, 128, 22, COL.ink, { serif: true, align: "center" });
+      const B = { x: 80, y: 160, w: 510, h: 230 }; const { X, Y } = axes(B, [2, 100], [-8, 8], { xl: "x", yl: "onda del primer cero", xt: [2, 25, 50, 75, 100], yt: [-5, 0, 5] });
+      const pts = [], up = [], dn = []; for (let x = 2; x <= 100; x += 0.25) { pts.push([x, wave(x, 0.5, ZEROS[0])]); up.push([x, 2 * Math.sqrt(x) / Math.hypot(0.5, ZEROS[0])]); dn.push([x, -2 * Math.sqrt(x) / Math.hypot(0.5, ZEROS[0])]); }
+      path(pts.filter(p => p[0] <= 2 + 98 * eo((t - wt("c07a", "onda")) / 2.2)), X, Y, COL.orange, 3);
+      withA(fadeIn(t, wt("c07b", "tamaño")), () => { path(up, X, Y, COL.teal, 1.5, [5, 4]); path(dn, X, Y, COL.teal, 1.5, [5, 4]); text("tamaño ∝ x^σ", X(80), Y(up[300][1]) - 8, 15, COL.teal, { align: "center" }); });
+      withA(fadeIn(t, wt("c07b", "giro")), () => text("giro: t · ln x", X(30), Y(-6.6), 15, COL.orange, { align: "center" })); });
+    withA(win(t, st("c07c"), st("c07d") - 0.1), () => {
+      const mini = (B, s, g, c, lab) => { const { X, Y } = axes(B, [2, 100], [-55, 55], { xt: [2, 50, 100], yt: [0] }); const pts = []; for (let x = 2; x <= 100; x += 0.15) pts.push([x, Math.pow(x, s) * Math.cos(g * Math.log(x))]); path(pts, X, Y, c, 2.2); text(lab, B.x, B.y - 8, 15, c, { w: 700 }); };
+      const k = (t - st("c07c")) / S.c07c.dur, g = lerp(14.13, 40, clamp(k * 2)), s = lerp(0.5, 0.85, clamp(k * 2 - 1));
+      mini({ x: 80, y: 140, w: 225, h: 220 }, 0.5, g, COL.orange, `t = ${es(g, 1)}: dónde oscila`);
+      mini({ x: 365, y: 140, w: 225, h: 220 }, s, 14.13, COL.teal, `σ = ${es(s, 2)}: cuánto se aparta`); });
+    withA(win(t, st("c07d"), st("c07x") - 0.1), () => { const B = { x: 80, y: 130, w: 510, h: 280 }; const { X, Y } = axes(B, [1, 60], [0, 62], { xl: "x", yl: "escalera de los primos ψ(x)", xt: [10, 20, 30, 40, 50, 60], yt: [0, 20, 40, 60] });
+      stairs(60, X, Y, n => PSI[n], "rgba(255,255,255,.55)", 3);
+      const t1 = wt("c07d", "1"), t10 = wt("c07d", "10"), t50 = wt("c07d", "50"); const N = t < t1 ? 0 : t < t10 ? 1 : t < t50 ? Math.round(lerp(1, 10, eo((t - t10 + 0.6) / 0.8))) : Math.round(lerp(10, 50, eo((t - t50 + 0.4) / 1.6)));
+      const pts = []; for (let x = 1.6; x <= 60; x += 0.12) { let y = smooth(x); for (let k = 0; k < N; k++) y += wave(x, 0.5, ZEROS[k]); pts.push([x, Math.max(-2, Math.min(64, y))]); } path(pts, X, Y, COL.orange, 2.5);
+      for (let p = 2; p <= 60; p++) if (isP(p)) dot(X(p), Y(PSI[p]), 3, COL.blue);
+      rr(92, 140, 140, 52, 10); ctx.fillStyle = COL.dark; ctx.fill(); text(String(N), 110, 180, 36, COL.orange); text("ONDAS", 162, 178, 17, COL.muted);
+      });
+    // solo las oscilaciones: −Σ cos(t·ln x) sobre 50 ceros da picos en los primos y sus potencias
+    withA(win(t, st("c07x"), capB(6) + 1), () => { const B = { x: 70, y: 150, w: 530, h: 240 }; const { X, Y } = axes(B, [1.5, 12.5], [-8, 19], { xl: "x", xt: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], yt: [0] });
+      const f = x => { let s = 0; for (let k = 0; k < 50; k++) s -= Math.cos(ZEROS[k] * Math.log(x)); return s; };
+      const pts = []; for (let x = 1.5; x <= 12.5; x += 0.01) pts.push([x, Math.max(-8, Math.min(16, f(x)))]);
+      path(pts.filter(p => p[0] <= 1.5 + 11 * eo((t - st("c07x") - 0.3) / 2.5)), X, Y, COL.teal, 2);
+      [[2, "2"], [3, "3"], [5, "5"], [7, "7"], [11, "11"]].forEach(([p, tok]) => withA(fadeIn(t, wt("c07x", tok)), () => { dot(X(p), Y(Math.min(15.6, f(p))), 6, COL.orange); text(String(p), X(p), Y(Math.min(15.6, f(p))) - 12, 18, COL.orange, { align: "center" }); }));
+      [[4, "4"], [8, "8"], [9, "9"]].forEach(([p, tok]) => withA(fadeIn(t, wt("c07x", tok)), () => { dot(X(p), Y(f(p)), 5, COL.blue); text(p === 4 ? "4 = 2²" : p === 8 ? "8 = 2³" : "9 = 3²", X(p), Y(f(p)) - 10, 13, COL.blue, { align: "center", w: 700 }); }));
+      text("−Σ cos(t · ln x), con los 50 primeros ceros", 590, 132, 16, COL.teal, { serif: true, align: "right" });
+      withA(fadeIn(t, st("c07e")), () => pill("LOS PRIMOS = SUMA DE ONDAS", 335, 430, 18, COL.teal, "#06281d")); });
+  });
+}
+function c8(t) {
+  const A = VIS(t, capA(7), capB(7)); if (A <= 0) return;
+  withA(A, () => {
+    panel(L.x, L.y, L.w, L.h);
+    const y0 = 410, y1 = 130, X = strip(50, 190, y0, y1); const Y = z => y0 - z / 70 * (y0 - y1);
+    const mv = eo((t - wt("c08d", "08")) / 1.0), sBad = 0.5 + 0.3 * mv, twin = fadeIn(t, wt("c08e", "gemelo"));
+    ZEROS.slice(0, 17).forEach((z, i) => { if (i === 4 && mv > 0) { dot(X(sBad), Y(z), 6, COL.red); if (twin > 0) { withA(twin, () => { dot(X(1 - sBad), Y(z), 6, COL.red); ctx.setLineDash([3, 3]); ctx.strokeStyle = COL.red; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(1 - sBad), Y(z)); ctx.lineTo(X(sBad), Y(z)); ctx.stroke(); ctx.setLineDash([]); text("espejo", X(0.5), Y(z) - 8, 12, COL.red, { align: "center" }); }); } } else dot(X(0.5), Y(z), 4.5, COL.orange); });
+    withA(fadeIn(t, wt("c08a", "medio")), () => pill("TODOS EN σ = ½", 120, 116, 15, COL.teal, "#06281d"));
+    const B = { x: 260, y: 130, w: 340, h: 270 }; const { X: PX, Y: PY } = axes(B, [0, 1000], [-260, 260], { xl: "x", yl: "cuánto se aparta la escalera de Gauss", xt: [0, 500, 1000], yt: [-200, 0, 200] });
+    const band = (e, c, k, f = 1) => { const up = [], dn = []; for (let x = 0; x <= 1000 * k; x += 10) { up.push([x, f * Math.pow(x, e)]); dn.push([x, -f * Math.pow(x, e)]); } if (up.length < 2) return; ctx.beginPath(); up.forEach((p, i) => i ? ctx.lineTo(PX(p[0]), PY(p[1])) : ctx.moveTo(PX(p[0]), PY(p[1]))); for (let i = dn.length - 1; i >= 0; i--) ctx.lineTo(PX(dn[i][0]), PY(dn[i][1])); ctx.fillStyle = c; ctx.fill(); };
+    const gk = eo((t - wt("c08b", "volumen")) / 2); if (gk > 0) band(0.5, "rgba(47,224,168,.45)", gk);
+    withA(fadeIn(t, wt("c08c", "logaritmo")), () => { const up = []; for (let x = 2; x <= 1000; x += 10) up.push([x, Math.sqrt(x) * Math.log(x) / 3]); path(up, PX, PY, COL.teal, 2, [5, 4]); text("todos en ½ → error ≤ √x · ln x", 270, 148, 15, COL.teal, { w: 700 }); });
+    withA(fadeIn(t, wt("c08c", "koch")), () => pill("VON KOCH, 1901: SON LO MISMO", 430, 425, 15, COL.dark));
+    if (mv > 0) { band(0.8, "rgba(255,77,94,.35)", mv); withA(fadeIn(t, wt("c08d", "63000") || wt("c08d", "63")), () => { pill("1.000 → 63.000", 430, 200, 20, COL.red); }); }
+  });
+}
+function c9(t) {
+  const A = VIS(t, capA(8), capB(8)); if (A <= 0) return;
+  withA(A, () => {
+    panel(L.x, L.y, L.w, L.h);
+    const k = eo((t - wt("c09b", "1/8")) / 1.2), lo = lerp(0, 1 / 8, k), hi = lerp(1, 7 / 8, k);
+    const X = strip(150, 500, 400, 140, { band: { a: lo, b: hi, c: `rgba(47,224,168,${0.12 + 0.18 * k})` } });
+    text(k < 0.5 ? "1896: todos dentro de 0 < σ < 1" : "OPENAI, 2026: 1/8 A 7/8 · EN REVISIÓN", 325, 128, k < 0.5 ? 18 : 20, k < 0.5 ? COL.muted : COL.teal, { align: "center" });
+    if (k > 0.5) { text("1/8", X(1 / 8), 440, 14, COL.teal, { align: "center" }); text("7/8", X(7 / 8), 440, 14, COL.teal, { align: "center" }); }
+    withA(fadeIn(t, wt("c09a", "40")) * (1 - k), () => { for (let i = 0; i < 20; i++) dot(X(0.5), 390 - i * 12.5, 4, i < 8 ? COL.teal : "rgba(255,255,255,.25)"); text("> 40 %", X(0.5) + 14, 300, 18, COL.teal); });
+    const q = fadeIn(t, st("c09c"), 0.4); if (q > 0) withA(q, () => { const p = 1 + 0.08 * Math.sin((t - st("c09c")) * 6); ctx.save(); ctx.translate(X(0.5), 270); ctx.scale(p, p); text("?", 0, 34, 100, COL.orange, { align: "center" }); ctx.restore(); });
+    withA(fadeIn(t, wt("c09c", "dólares")), () => pill("PREMIO CLAY: 1.000.000 $", 325, 459, 16, COL.orange));
+    // demostrar no es encontrar todos: los ceros siguen subiendo sin fin
+    const kx = fadeIn(t, st("c09x"), 0.6); if (kx > 0) withA(kx, () => { ctx.fillStyle = COL.panel; ctx.fillRect(L.x + 8, 104, L.w - 16, 334); ctx.fillStyle = COL.bg; ctx.fillRect(140, 442, 370, 34);
+      const sx = strip(150, 500, 400, 140, { labels: false }); ctx.save(); ctx.beginPath(); ctx.rect(150, 140, 350, 260); ctx.clip();
+      const off = (t - st("c09x")) * 40; for (let i = 0; i < 40; i++) { const y = 400 - ((i * 22 + off) % 880); if (y > 130) dot(sx(0.5), y, 4.5, COL.orange); } ctx.restore();
+      arrowLine(sx(0.5), 150, sx(0.5), 112, COL.orange, 2.5); text("∞", sx(0.5) + 16, 122, 26, COL.orange);
+      withA(fadeIn(t, wt("c09x", "infinitos")), () => text("infinitos: no se pueden comprobar uno a uno", 325, 425, 16, COL.muted, { align: "center", w: 600, cond: false }));
+      withA(fadeIn(t, wt("c09x", "ninguno")), () => pill("DEMOSTRAR: NINGUNO SE SALE DE ½", 325, 459, 17, COL.teal, "#06281d")); });
+  });
+}
+function c10(t) {
+  const A = VIS(t, capA(9), TOTAL + 9); if (A <= 0) return;
+  withA(A, () => {
+    const boxes = [["Primos", "la escalera π(x)", 110, 150, "primos"], ["Zeta", "Σ 1/nˢ = ∏ por primos", 330, 150, "zeta"], ["Plano complejo", "tamaño y giro", 550, 150, "complejo"], ["Ceros", "todos en ½ (?)", 550, 290, "ceros"], ["Ondas", "una por cero", 330, 290, "onda"], ["Escalera exacta", "Gauss + ondas", 110, 290, "dibujan"]];
+    boxes.forEach(([h, s, x, y, tok], i) => withA(fadeIn(t, wt("c10a", tok)), () => { rr(x - 95, y - 40, 190, 80, 14); ctx.fillStyle = i < 3 ? "#1a2550" : i === 3 ? "#123a31" : "#3a2216"; ctx.fill(); text(h.toUpperCase(), x, y - 4, 22, COL.ink, { align: "center" }); text(s, x, y + 22, 14, COL.muted, { align: "center", w: 600, cond: false });
+      if (i > 0) { const [px, py] = [boxes[i - 1][2], boxes[i - 1][3]]; if (py === y) arrowLine(px + (x > px ? 97 : -97), y, x + (x > px ? -97 : 97), y, COL.muted, 2); else arrowLine(x, py + 42, x, y - 42, COL.muted, 2); } }));
+    withA(fadeIn(t, st("c10b")), () => { pill("HIPÓTESIS: TODAS LAS ONDAS CON EL VOLUMEN MÍNIMO", 330, 400, 17, COL.teal, "#06281d"); });
+    withA(fadeIn(t, wt("c10b", "enlace")), () => { text("La explicación completa, con gráficos para tocar: enlace en el texto", 330, 440, 16, COL.orange, { align: "center", w: 700, cond: false }); text("Realizado por JAC", 330, 462, 13, COL.muted, { align: "center", w: 600, cond: false }); });
+  });
+}
+
+/* ---------- fotograma ---------- */
+function render(t) {
+  ctx.setTransform(2, 0, 0, 2, 0, 0);
+  ctx.fillStyle = COL.bg; ctx.fillRect(0, 0, 960, 540);
+  const g = ctx.createRadialGradient(250 + Math.sin(t / 4) * 80, 260, 20, 250, 260, 600); g.addColorStop(0, "rgba(79,156,255,.10)"); g.addColorStop(1, "rgba(79,156,255,0)"); ctx.fillStyle = g; ctx.fillRect(0, 0, 960, 540);
+  // barra de capítulos
+  const sw = (912 - 9 * 4) / 10;
+  CAPS.forEach((c, i) => { const x = 24 + i * (sw + 4); rr(x, 14, sw, 20, 5); ctx.fillStyle = "rgba(255,255,255,.12)"; ctx.fill(); const k = clamp((t - capStart[i]) / (capEnd[i] - capStart[i]));
+    if (k > 0) { ctx.save(); rr(x, 14, sw, 20, 5); ctx.clip(); ctx.fillStyle = COL.ink; ctx.fillRect(x, 14, sw * k, 20); ctx.restore(); } text(`${i + 1} · ${c.toUpperCase()}`, x + sw / 2, 28, 9.5, k > 0.5 ? COL.bg : "rgba(255,255,255,.75)", { align: "center" }); });
+  const cc = CAPS.findIndex((_, i) => t >= capStart[i] && t < capEnd[i]);
+  if (cc >= 0) withA(win(t, capA(cc), capB(cc)), () => { text(`${cc + 1}`, 24, 78, 30, COL.orange); font(30); const nw = ctx.measureText(`${cc + 1}`).width; text(CAPS[cc].toUpperCase(), 24 + nw + 10, 78, 30, COL.ink); });
+  text("HIPÓTESIS DE RIEMANN · EXPLICADA DESPACIO", 936, 78, 12, COL.muted, { align: "right", w: 600 });
+  c1(t); c2(t); c4(t); c5(t); c6(t); c7(t); c8(t); c9(t); c10(t); pizarra(t); card(t);
+  // subtítulos
+  const Ln = TL.find(x => t >= x.start - 0.05 && t < x.start + x.dur + 0.35);
+  if (Ln) { let wi = 0; Ln.words.forEach((w, i) => { if (w.s <= t) wi = i; }); const ch = Ln.chunks.find(c => c.includes(wi)) || Ln.chunks[0];
+    font(27); const widths = ch.map(i => ctx.measureText(Ln.words[i].x).width); const total = widths.reduce((a, b) => a + b, 0) + (ch.length - 1) * 12; let x = Math.max(24, 480 - total / 2), y = 496;
+    ch.forEach((i, j) => { const w = widths[j]; if (x + w > 936) { x = 24; y += 34; } if (i === wi) { rr(x - 5, y - 25, w + 10, 33, 6); ctx.fillStyle = COL.orange; ctx.fill(); } text(Ln.words[i].x, x, y, 27, i > wi ? "rgba(243,239,230,.42)" : "#fff"); x += w + 12; }); }
+  text("Realizado por JAC · Basado en «La hipótesis de Riemann, paso a paso»", 480, 532, 9.5, "rgba(154,163,192,.8)", { align: "center", w: 500, cond: false });
+}
+
+/* ---------- escalado y reproductor ---------- */
+const stage = $("stage");
+function fit() { const s = VIDEO ? 1 : Math.min(innerWidth / 960, innerHeight / 540); stage.style.transform = `translate(-50%,-50%) scale(${s})`; }
+addEventListener("resize", fit); fit();
+if (VIDEO) {
+  ["ctl", "play", "tapl", "tapr"].forEach(id => $(id).style.display = "none");
+  window.__total = TOTAL; window.__seek = x => render(x);
+  Promise.all([document.fonts.load('800 40px "Archivo"'), document.fonts.load('italic 600 40px "Newsreader"')]).then(() => document.fonts.ready).then(() => { render(0); window.__ready = true; });
+  return;
+}
+const au = new Audio("audio.mp3"); au.preload = "auto";
+let t = 0, playing = false, last = performance.now(), clock = false;
+const pp = $("b-pp"), snd = $("b-snd");
+const setPP = () => { pp.textContent = playing ? "❚❚" : "▶"; pp.setAttribute("aria-label", playing ? "Pausa" : "Seguir"); };
+const seek = x => { t = clamp(x, 0, TOTAL); try { au.currentTime = t; } catch (e) {} };
+function play() { if (t >= TOTAL - 0.05) seek(0); playing = true; $("play").hidden = true; au.play().then(() => { clock = false; }).catch(() => { clock = true; }); setPP(); }
+function pause() { playing = false; au.pause(); setPP(); }
+function tick(now) { if (playing) { if (!clock && !au.paused && au.readyState > 2) t = au.currentTime; else t += (now - last) / 1000; if (t >= TOTAL) { t = TOTAL; pause(); } } last = now; render(t); requestAnimationFrame(tick); }
+const starts = CARDS.map(c => c.start);
+const next = () => { const n = starts.find(s => s > t + 0.1); seek(n === undefined ? TOTAL - 0.01 : n); if (!playing) play(); };
+const prev = () => { const cur = starts.filter(s => s <= t + 0.05); let p = cur.pop() || 0; if (t - p < 2) p = cur.pop() || 0; seek(p); };
+$("b-go").addEventListener("click", play);
+pp.addEventListener("click", () => playing ? pause() : play());
+snd.addEventListener("click", () => { au.muted = !au.muted; snd.textContent = au.muted ? "🔇" : "🔊"; snd.setAttribute("aria-label", au.muted ? "Activar sonido" : "Quitar sonido"); });
+$("tapr").addEventListener("click", next); $("tapl").addEventListener("click", prev);
+document.addEventListener("keydown", e => { if (e.key === "ArrowRight") next(); else if (e.key === "ArrowLeft") prev(); else if (e.key === " ") { e.preventDefault(); playing ? pause() : play(); } });
+setPP(); document.fonts.ready.then(() => requestAnimationFrame(tick));
+})();
+
+</script>

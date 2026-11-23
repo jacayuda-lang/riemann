@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La hipótesis de Riemann, paso a paso</title>
+<style>
+:root{--bg:#fcfcfb;--card:#ffffff;--ink:#1a1a18;--ink2:#52514e;--muted:#898781;--line:#e1e0d9;--tint:#f1efe8;--blue:#2a78d6;--orange:#eb6834;--teal:#1baf7a;--red:#d03b3b;--gray:#898781;--accentbg:#e6f1fb;--accentink:#0c447c}
+@media (prefers-color-scheme:dark){:root{--bg:#151515;--card:#1e1e1d;--ink:#f0efec;--ink2:#c3c2b7;--muted:#898781;--line:#2c2c2a;--tint:#232322;--blue:#3987e5;--orange:#d95926;--teal:#199e70;--red:#e66767;--accentbg:#0c2a47;--accentink:#b5d4f4}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{padding:40px 20px 12px;max-width:820px;margin:0 auto}
+h1{font-size:30px;font-weight:600;margin:0 0 8px;line-height:1.2}
+.lead{color:var(--ink2);font-size:17px;margin:0}
+nav{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+nav .in{max-width:820px;margin:0 auto;display:flex;gap:6px;overflow-x:auto;padding:10px 20px;scrollbar-width:none}
+nav a{white-space:nowrap;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--ink2);text-decoration:none}
+nav a:hover{background:var(--tint)}
+main{max-width:820px;margin:0 auto;padding:0 20px 80px}
+section{padding:36px 0 8px;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+h2{font-size:23px;font-weight:600;margin:0 0 6px;line-height:1.25}
+h3{font-size:17px;font-weight:600;margin:28px 0 6px}
+.num{display:inline-block;font-size:12px;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;text-transform:uppercase}
+p{margin:10px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin:18px 0}
+.ctrl{display:flex;align-items:center;gap:12px;margin:8px 0}
+.ctrl label{font-size:14px;color:var(--ink2);min-width:140px}
+.ctrl input[type=range]{flex:1;accent-color:var(--blue)}
+.ctrl output{font-size:14px;font-weight:600;min-width:60px;text-align:right;font-variant-numeric:tabular-nums}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.stat{background:var(--tint);border-radius:10px;padding:10px 12px}
+.stat .l{font-size:12px;color:var(--ink2)}
+.stat .v{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;cursor:help;display:inline-block;border-bottom:1.5px dotted var(--muted)}
+.stat .v:hover{color:var(--blue);border-color:var(--blue)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--ink2);margin:6px 0}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:14px;height:3px;display:inline-block}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chart{position:relative;width:100%;height:280px}
+.chart.tall{height:340px}
+.btns{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+button{font:inherit;font-size:14px;padding:7px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button:hover{background:var(--tint)}
+button.on{background:var(--accentbg);color:var(--accentink);border-color:var(--accentink)}
+.note{font-size:14px;color:var(--ink2);background:var(--tint);border-radius:10px;padding:10px 14px;margin:12px 0}
+.note b{color:var(--ink)}
+.hint{font-size:13px;color:var(--accentink);background:var(--accentbg);border-radius:10px;padding:8px 14px;margin:14px 0 0}
+.formula{font-family:"Cambria Math","Latin Modern Math",Georgia,serif;font-size:19px;text-align:center;padding:14px;background:var(--tint);border-radius:10px;margin:14px 0;overflow-x:auto}
+.formula sup,.formula sub{font-size:70%}
+.formula small{display:block;font-family:inherit;font-size:13px;color:var(--ink2);margin-top:6px}
+.sub{font-size:13px;color:var(--ink2);margin:4px 0 0}
+input[type=number]{font:inherit;font-size:15px;width:110px;padding:6px 8px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}
+.chip{min-width:30px;text-align:center;font-size:13px;padding:3px 0;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+.chip.p{background:var(--accentbg);color:var(--accentink);border-color:var(--accentink)}
+.chip.n{background:var(--tint);color:var(--ink2)}
+.map{width:100%;height:auto;display:block;margin:12px 0}
+dl{margin:0}dt{font-weight:600;margin-top:12px}dd{margin:2px 0 0;color:var(--ink2)}
+.steps{list-style:none;margin:16px 0;padding:0;border-left:2px solid var(--line)}
+.steps li{position:relative;padding:0 0 18px 22px}
+.steps li::before{content:"";position:absolute;left:-7px;top:8px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid var(--bg)}
+.steps b.t{display:block;font-size:16px}
+.steps .eq{font-family:"Cambria Math",Georgia,serif;font-size:16px;color:var(--ink);background:var(--tint);border-radius:6px;padding:2px 8px;display:inline-block;margin:4px 0}
+.steps .why{font-size:14px;color:var(--ink2)}
+.steps .why b{color:var(--ink)}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.steps{list-style:none;margin:16px 0;padding:0;border-left:2px solid var(--line)}
+.steps li{position:relative;padding:0 0 18px 22px}
+.steps li::before{content:"";position:absolute;left:-7px;top:8px;width:12px;height:12px;border-radius:50%;background:var(--blue);border:2px solid var(--bg)}
+.steps b.t{display:block;font-size:16px}
+.steps .eq{font-family:"Cambria Math",Georgia,serif;font-size:16px;color:var(--ink);background:var(--tint);border-radius:6px;padding:2px 8px;display:inline-block;margin:4px 0}
+.steps .why{font-size:14px;color:var(--ink2)}
+.steps .why b{color:var(--ink)}
+.twocol{grid-template-columns:1fr}.ctrl label{min-width:110px}}
+canvas.plane{width:100%;height:auto;display:block;border-radius:10px;background:var(--tint)}
+#tip{position:fixed;z-index:50;max-width:340px;background:var(--ink);color:var(--bg);font-size:13px;line-height:1.5;padding:10px 12px;border-radius:10px;pointer-events:none;opacity:0;transition:opacity .12s;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+#tip.on{opacity:1}
+details.razon{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:10px;padding:10px 14px;margin:14px 0;font-size:15px}
+details.razon summary{cursor:pointer;font-weight:600;color:var(--accentink)}
+details.razon[open] summary{margin-bottom:8px}
+details.razon .eqn{font-family:"Cambria Math","Latin Modern Math",Georgia,serif;font-size:16px;background:var(--tint);border-radius:6px;padding:6px 10px;margin:8px 0;overflow-x:auto;white-space:nowrap}
+details.razon ol,details.razon ul{margin:6px 0;padding-left:22px}
+#tip b{color:var(--bg)}
+#tip .f{font-family:"Cambria Math",Georgia,serif;font-size:14px;display:block;margin:4px 0}
+#tip .r{display:block;opacity:.75;font-size:12px;margin-top:4px}
+</style>
+</head>
+<body>
+<div id="tip" role="tooltip"></div>
+<header>
+<h1>La hipótesis de Riemann, paso a paso</h1>
+<p class="lead">Un recorrido interactivo: de contar primos a la función zeta, del plano complejo a los ceros, y de los ceros a las ondas que dibujan los primos. Cada gráfico se puede mover; cada función se puede calcular.</p>
+<div class="hint">Pasa el cursor (o toca) sobre cualquier valor subrayado con puntos, o sobre los puntos de los gráficos, para ver el cálculo detallado.</div>
+<div class="hint" style="margin-top:8px">¿Prefieres que te lo cuenten? <a href="video/" style="color:inherit;font-weight:600">Versión animada con voz, unos 10 minutos →</a></div>
+</header>
+<nav><div class="in">
+<a href="#mapa">Mapa</a><a href="#contar">1 · Contar primos</a><a href="#gauss">2 · Gauss</a><a href="#dirichlet">3 · Dirichlet y zeta</a><a href="#muro">4 · El muro en 1</a><a href="#complejo">5 · Plano complejo</a><a href="#continuar">6 · Continuación</a><a href="#ceros">7 · Los ceros</a><a href="#volumen">8 · Altura y volumen</a><a href="#ondas">9 · Ondas y primos</a><a href="#hipotesis">10 · La hipótesis</a><a href="#nudos">11 · Los nudos difíciles</a><a href="#musica">12 · La música de los ceros</a><a href="#importa">13 · Por qué importa</a><a href="#resumen">14 · Todo junto</a><a href="#glosario">Glosario</a>
+</div></nav>
+<main>
+
+<section id="mapa">
+<span class="num">El recorrido</span>
+<h2>Mapa de la conexión</h2>
+<p>Todo el problema cabe en una cadena de cinco eslabones. Cada caja es una sección de esta página; pulsa en una para ir a ella.</p>
+<svg class="map" viewBox="0 0 760 330" role="img" aria-label="Esquema: los primos construyen la zeta, la zeta se extiende al plano complejo, allí tiene ceros, cada cero emite una onda y las ondas reconstruyen la escalera de primos">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L8 5L1 9" fill="none" stroke="#898781" stroke-width="1.5"/></marker></defs>
+<a href="#contar"><rect x="20" y="20" width="220" height="70" rx="12" fill="#e6f1fb" stroke="#378add"/><text x="130" y="48" text-anchor="middle" font-size="16" font-weight="600" fill="#0c447c">Contar primos</text><text x="130" y="72" text-anchor="middle" font-size="13" fill="#185fa5">la escalera π(x)</text></a>
+<a href="#dirichlet"><rect x="270" y="20" width="220" height="70" rx="12" fill="#e6f1fb" stroke="#378add"/><text x="380" y="48" text-anchor="middle" font-size="16" font-weight="600" fill="#0c447c">Serie de Dirichlet</text><text x="380" y="72" text-anchor="middle" font-size="13" fill="#185fa5">ζ(s) = Σ 1/nˢ, hecha de primos</text></a>
+<a href="#complejo"><rect x="520" y="20" width="220" height="70" rx="12" fill="#eeedfe" stroke="#7f77dd"/><text x="630" y="48" text-anchor="middle" font-size="16" font-weight="600" fill="#26215c">Plano complejo</text><text x="630" y="72" text-anchor="middle" font-size="13" fill="#534ab7">s = σ + it: tamaño y giro</text></a>
+<a href="#ceros"><rect x="520" y="130" width="220" height="70" rx="12" fill="#eeedfe" stroke="#7f77dd"/><text x="630" y="158" text-anchor="middle" font-size="16" font-weight="600" fill="#26215c">Los ceros</text><text x="630" y="182" text-anchor="middle" font-size="13" fill="#534ab7">donde ζ(s) = 0, todos en ½</text></a>
+<a href="#ondas"><rect x="270" y="130" width="220" height="70" rx="12" fill="#faece7" stroke="#d85a30"/><text x="380" y="158" text-anchor="middle" font-size="16" font-weight="600" fill="#4a1b0c">Una onda por cero</text><text x="380" y="182" text-anchor="middle" font-size="13" fill="#993c1d">frecuencia t, volumen x^σ</text></a>
+<a href="#gauss"><rect x="20" y="130" width="220" height="70" rx="12" fill="#faece7" stroke="#d85a30"/><text x="130" y="158" text-anchor="middle" font-size="16" font-weight="600" fill="#4a1b0c">Curva de Gauss + ondas</text><text x="130" y="182" text-anchor="middle" font-size="13" fill="#993c1d">= la escalera exacta</text></a>
+<a href="#hipotesis"><rect x="145" y="245" width="470" height="62" rx="12" fill="#e1f5ee" stroke="#1d9e75"/><text x="380" y="270" text-anchor="middle" font-size="16" font-weight="600" fill="#04342c">Hipótesis de Riemann</text><text x="380" y="293" text-anchor="middle" font-size="13" fill="#0f6e56">todos los ceros en σ = ½ ⇒ error de Gauss ≈ √x · ln x, el mínimo posible</text></a>
+<line x1="240" y1="55" x2="266" y2="55" stroke="#898781" stroke-width="1.5" marker-end="url(#ar)"/>
+<line x1="490" y1="55" x2="516" y2="55" stroke="#898781" stroke-width="1.5" marker-end="url(#ar)"/>
+<line x1="630" y1="90" x2="630" y2="126" stroke="#898781" stroke-width="1.5" marker-end="url(#ar)"/>
+<line x1="520" y1="165" x2="494" y2="165" stroke="#898781" stroke-width="1.5" marker-end="url(#ar)"/>
+<line x1="270" y1="165" x2="244" y2="165" stroke="#898781" stroke-width="1.5" marker-end="url(#ar)"/>
+<path d="M130 200 L130 230 L380 230 L380 241" fill="none" stroke="#898781" stroke-width="1.5" marker-end="url(#ar)"/>
+<path d="M630 200 L630 230 L380 230" fill="none" stroke="#898781" stroke-width="1.5"/>
+</svg>
+<div class="note"><b>La idea en una frase.</b> Los primos construyen la zeta; la zeta, llevada al plano complejo, tiene ceros; cada cero emite una onda; la suma de las ondas convierte la curva lisa de Gauss en la escalera exacta de los primos. La hipótesis dice que todas esas ondas tienen el volumen más bajo posible.</div>
+</section>
+
+<section id="contar">
+<span class="num">Sección 1</span>
+<h2>Contar primos: la escalera π(x)</h2>
+<p>Riemann no intentó adivinar cada primo. Se preguntó algo más manejable: hasta un número x, ¿cuántos primos hay? A esa cuenta se la llama <b>π(x)</b> (la π es solo un nombre, no 3,1416). Se dibuja avanzando por los números: si el número es primo, la cuenta sube 1; si no, se queda igual.</p>
+<div class="card">
+<div class="chips" id="chips"></div>
+<div class="grid"><div class="stat"><div class="l">Número</div><div class="v" id="b-n">0</div></div><div class="stat"><div class="l">Primos contados</div><div class="v" id="b-c">0</div></div></div>
+<p class="sub" id="b-msg">Pulsa «Siguiente» para empezar.</p>
+<div class="chart" style="height:240px"><canvas id="cBuild"></canvas></div>
+<div class="btns"><button id="b-next">Siguiente</button><button id="b-all">Hasta el 40</button><button id="b-reset">Empezar de nuevo</button></div>
+</div>
+<p>Dos cosas que ya se ven en esta escalera: todos los escalones tienen la misma altura (1), pero no el mismo ancho, porque los huecos entre primos son irregulares. Y la escalera se va «tumbando»: los primos se vuelven más escasos cuanto más avanzas.</p>
+</section>
+
+<section id="gauss">
+<span class="num">Sección 2</span>
+<h2>La curva de Gauss: casi acierta</h2>
+<p>Con 15 años, Gauss notó que cerca de un número x, aproximadamente 1 de cada ln x números es primo. De ahí salen dos aproximaciones lisas: la sencilla, <b>x / ln x</b>, y la fina, la <b>integral logarítmica Li(x)</b>, que es el área bajo 1/ln t. Compara las tres curvas hasta el rango que quieras: aquí puedes llegar hasta un millón.</p>
+<div class="card">
+<h3 style="margin-top:0">Qué es Li(x): una densidad que se acumula</h3>
+<p class="sub">La curva naranja es una <b>densidad</b>, no una cuenta: en t = 100 vale 1/ln 100 = 0,217, es decir, «en promedio, 0,217 primos por cada número», unos 2 por decena. Cada columna de anchura 1 bajo la curva vale 1/ln t primos. Si apilas todas las columnas desde 2 hasta x obtienes cuántos primos «deberían» haber salido: eso es el área, y eso es Li(x) = ∫₂ˣ dt/ln t. La aproximación tosca x/ln x usa solo la densidad del final para todo el recorrido; la integral tiene en cuenta que al principio la densidad era mayor, y por eso acierta más.</p>
+<div class="ctrl"><label for="l-x">Hasta x =</label><input type="range" id="l-x" min="10" max="200" step="1" value="100"><output id="l-xo">100</output></div>
+<div class="grid">
+<div class="stat"><div class="l">Área sombreada = Li(x)</div><div class="v" id="l-li">0</div></div>
+<div class="stat"><div class="l">Primos reales π(x)</div><div class="v" id="l-pi">0</div></div>
+<div class="stat"><div class="l" id="l-dl">Densidad en t = 100</div><div class="v" id="l-dv">0</div></div>
+<div class="stat"><div class="l">Primos en la última decena</div><div class="v" id="l-loc">0</div></div>
+</div>
+<div class="legend"><span><i class="sw" style="background:var(--orange)"></i>densidad 1 / ln t</span><span><i class="sw" style="background:var(--orange);opacity:.3;height:10px"></i>área acumulada hasta x = Li(x)</span><span><i class="dot" style="background:var(--blue)"></i>primos (altura 1 = un primo entero)</span></div>
+<div class="chart" style="height:250px"><canvas id="cLi"></canvas></div>
+<p class="sub">Dos matices: se empieza en 2 porque ln 1 = 0 y la curva se dispara ahí (es un convenio). Y Li(x) sale casi siempre un poco por encima de π(x): ese exceso no es un fallo de la idea, es justo lo que las ondas de los ceros corrigen.</p>
+</div>
+<div class="card">
+<div class="ctrl"><label for="g-x">Hasta x =</label><input type="range" id="g-x" min="1" max="6" step="0.01" value="2"><output id="g-xo">100</output></div>
+<div class="grid">
+<div class="stat"><div class="l">Primos reales π(x)</div><div class="v" id="g-pi">0</div></div>
+<div class="stat"><div class="l">Li(x)</div><div class="v" id="g-li">0</div></div>
+<div class="stat"><div class="l">x / ln x</div><div class="v" id="g-xl">0</div></div>
+<div class="stat"><div class="l">Error de Li(x)</div><div class="v" id="g-err">0</div></div>
+<div class="stat"><div class="l">√x · ln x (cota si RH)</div><div class="v" id="g-sq">0</div></div>
+<div class="stat"><div class="l">Error relativo de Li</div><div class="v" id="g-rel">0</div></div>
+</div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>π(x) real</span><span><i class="sw" style="border-top:2px dashed var(--orange)"></i>Li(x)</span><span><i class="sw" style="border-top:2px dotted var(--gray)"></i>x / ln x</span></div>
+<div class="chart"><canvas id="cGauss"></canvas></div>
+<p class="sub">Toca la curva para ver los valores y el cálculo en ese x.</p>
+</div>
+<p>Fíjate en el error: hasta un millón, Li(x) se equivoca en unos 130 primos de 78.498. Es pequeñísimo, y además crece mucho más despacio que √x · ln x. Ese dato, que el error de Gauss nunca pase de √x · ln x, es <b>exactamente</b> lo que afirma la hipótesis de Riemann, dicho en el idioma de los primos. El porqué lo tienes dos tarjetas más abajo.</p>
+<div class="card">
+<h3 style="margin-top:0">El error a lo largo de todo el rango</h3>
+<p class="sub">Ejes logarítmicos. La línea gris es la cota √x · ln x. Si algún día el error la cruzara, la hipótesis sería falsa.</p>
+<div class="legend"><span><i class="sw" style="background:var(--orange)"></i>|Li(x) − π(x)|</span><span><i class="sw" style="border-top:2px dashed var(--gray)"></i>√x · ln x</span></div>
+<div class="chart" style="height:240px"><canvas id="cErr"></canvas></div>
+</div>
+<div class="card">
+<h3 style="margin-top:0">¿Por qué justo √x · ln x? El error es una suma de ondas</h3>
+<p class="sub">Lo que verás en las secciones 8 y 9: la diferencia entre la escalera y la curva de Gauss es, exactamente, la suma de una onda por cada cero de la zeta. Cada onda tiene amplitud proporcional a x^σ, donde σ es la parte real de su cero. En una suma de muchas ondas, a la larga manda la de mayor σ: el error crece como x^Θ · ln x, donde Θ es el mayor σ de todos los ceros.</p>
+<div class="formula">error de Gauss ≈ x^Θ · ln x,&nbsp;&nbsp; Θ = el mayor σ entre todos los ceros<small>Si Θ = ½ (todos los ceros en la línea), el error es ≈ √x · ln x. Si hubiera un cero con σ = 0,8, el error acabaría creciendo como x⁰·⁸. Las dos afirmaciones son equivalentes: lo demostró von Koch en 1901.</small></div>
+<div class="ctrl"><label for="k-s">Θ hipotético (peor cero en σ =)</label><input type="range" id="k-s" min="0.5" max="0.95" step="0.05" value="0.5"><output id="k-so">0,50</output></div>
+<div class="grid">
+<div class="stat"><div class="l">Error real en 10⁶</div><div class="v" id="k-real">0</div></div>
+<div class="stat"><div class="l">Cota con Θ = ½ en 10⁶</div><div class="v" id="k-rh">0</div></div>
+<div class="stat"><div class="l" id="k-lab">Cota con Θ = 0,50 en 10⁶</div><div class="v" id="k-hyp">0</div></div>
+<div class="stat"><div class="l">Misma cota en 10¹²</div><div class="v" id="k-big">0</div></div>
+</div>
+<div class="legend"><span><i class="sw" style="background:var(--orange)"></i>error real |Li − π|</span><span><i class="sw" style="border-top:2px dashed var(--gray)"></i>√x · ln x (Θ = ½)</span><span><i class="sw" style="border-top:2px dashed var(--red)"></i>x^Θ · ln x con el Θ elegido</span></div>
+<div class="chart" style="height:260px"><canvas id="cKoch"></canvas></div>
+<p class="sub" id="k-msg"></p>
+</div>
+</section>
+
+<section id="dirichlet">
+<span class="num">Sección 3</span>
+<h2>La serie de Dirichlet y la función zeta</h2>
+<p>Una <b>serie de Dirichlet</b> es una suma infinita con esta forma: a₁/1ˢ + a₂/2ˢ + a₃/3ˢ + … Los números aₙ son una secuencia cualquiera; la s es la variable. La más sencilla posible es la que tiene todos los aₙ = 1, y esa es la <b>función zeta de Riemann</b>:</p>
+<div class="formula">ζ(s) = 1 + 1/2ˢ + 1/3ˢ + 1/4ˢ + 1/5ˢ + …<small>Por ejemplo ζ(2) = 1 + 1/4 + 1/9 + 1/16 + … = 1,6449… = π²/6</small></div>
+<p>¿Dónde están los primos? Euler vio que, como todo número se descompone de forma única en primos, esa misma suma se puede escribir como un producto con <b>un factor por cada primo</b> y nada más:</p>
+<div class="formula">ζ(s) = 1/(1−2⁻ˢ) · 1/(1−3⁻ˢ) · 1/(1−5⁻ˢ) · 1/(1−7⁻ˢ) · …<small>Suma sobre todos los números = producto sobre los primos. Son la misma función.</small></div>
+<details class="razon"><summary>Razonamiento: por qué la suma es igual al producto (Euler, 1737)</summary>
+<ol>
+<li>Cada factor es una serie geométrica (vale porque |p<sup>−s</sup>| &lt; 1 si σ &gt; 0):<div class="eqn">1 / (1 − p<sup>−s</sup>) = 1 + p<sup>−s</sup> + p<sup>−2s</sup> + p<sup>−3s</sup> + …</div></li>
+<li>Multiplica los factores de 2 y de 3. Cada término del resultado es (2<sup>a</sup>·3<sup>b</sup>)<sup>−s</sup>: salen todos los números que solo tienen los factores 2 y 3, cada uno una vez.<div class="eqn">(1 + 2<sup>−s</sup> + 4<sup>−s</sup> + …)(1 + 3<sup>−s</sup> + 9<sup>−s</sup> + …) = 1 + 2<sup>−s</sup> + 3<sup>−s</sup> + 4<sup>−s</sup> + 6<sup>−s</sup> + 8<sup>−s</sup> + 9<sup>−s</sup> + 12<sup>−s</sup> + …</div></li>
+<li>Con todos los primos hasta P salen todos los n cuyos factores son ≤ P. Cada n aparece <b>exactamente una vez</b> por la factorización única: 12 = 2²·3 solo se obtiene eligiendo 2² del primer factor y 3 del segundo.</li>
+<li>Al hacer P → ∞ aparecen todos los n. Para σ &gt; 1 la serie converge absolutamente, así que se puede reordenar sin cambiar el resultado. Queda ζ(s) = ∏ 1/(1 − p<sup>−s</sup>).</li>
+</ol>
+<p><b>Consecuencias inmediatas.</b> (a) Hay infinitos primos: si fueran finitos, el producto en s = 1 sería un número finito, pero ζ(1) es la serie armónica, que diverge. (b) Tomando logaritmos y derivando sale la serie que «cuenta» primos, usada en la sección 9:</p>
+<div class="eqn">−ζ′(s)/ζ(s) = Σ<sub>n≥1</sub> Λ(n)/nˢ,   con Λ(n) = ln p si n = p<sup>k</sup>, y 0 en otro caso (función de von Mangoldt)</div>
+</details>
+<div class="card">
+<h3 style="margin-top:0">Experimenta: elige s y mira cómo se suma</h3>
+<div class="ctrl"><label for="d-s">Exponente s</label><input type="range" id="d-s" min="0.5" max="4" step="0.05" value="2"><output id="d-so">2,00</output></div>
+<div class="ctrl"><label for="d-n">Términos</label><input type="range" id="d-n" min="1" max="60" step="1" value="20"><output id="d-no">20</output></div>
+<div class="ctrl"><label>Secuencia aₙ</label><div class="btns" style="margin:0"><button id="d-one" class="on">todos 1 (zeta)</button><button id="d-alt">alternos ±1 (eta)</button></div></div>
+<div class="grid">
+<div class="stat"><div class="l">Suma parcial</div><div class="v" id="d-sum">0</div></div>
+<div class="stat"><div class="l">Producto de Euler (mismos primos)</div><div class="v" id="d-prod">0</div></div>
+<div class="stat"><div class="l">Valor límite</div><div class="v" id="d-lim">0</div></div>
+</div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>términos aₙ/nˢ</span><span><i class="sw" style="background:var(--orange)"></i>suma acumulada</span></div>
+<div class="chart"><canvas id="cDir"></canvas></div>
+<p class="sub" id="d-msg"></p>
+</div>
+<p>Observa el papel de s: cuanto mayor es, más deprisa se encogen los términos y antes se estabiliza la suma. Con s = 2 bastan unos pocos términos. Con s = 1,1 hacen falta muchísimos. Y con s = 1 o menor la suma <b>no se estabiliza nunca</b>. Ahí está el muro.</p>
+<div class="note"><b>Por qué Dirichlet.</b> Dirichlet usó series como esta (con aₙ periódicos, las llamadas funciones L) para demostrar que hay infinitos primos en progresiones como 1, 5, 9, 13… La zeta es el caso base; todas las demás son variaciones del mismo truco: convertir preguntas sobre primos en preguntas sobre una función.</div>
+</section>
+
+<section id="muro">
+<span class="num">Sección 4</span>
+<h2>El muro en s = 1</h2>
+<p>Dibuja ζ(s) para s real. Cuando s se acerca a 1, la función se dispara a infinito: ζ(1) = 1 + 1/2 + 1/3 + … es la serie armónica, que crece sin límite. A la izquierda de 1, la suma directa no significa nada.</p>
+<div class="card">
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>ζ(s) con la suma directa (solo s &gt; 1)</span></div>
+<div class="chart" style="height:250px"><canvas id="cWall"></canvas></div>
+</div>
+<p>Y aquí viene el problema de fondo. La información de los primos que queremos (dónde están exactamente) no está en la zona cómoda s &gt; 1. Está escondida en la franja 0 &lt; s &lt; 1, donde la suma no funciona. Para llegar allí hacen falta dos ideas: <b>salir de la recta real al plano complejo</b> y <b>extender la función</b> más allá de donde la suma la define.</p>
+</section>
+
+<section id="complejo">
+<span class="num">Sección 5</span>
+<h2>Por qué el plano complejo: tamaño y giro</h2>
+<p>Un número complejo s = σ + it tiene dos partes: la real σ y la imaginaria t. Lo que hace que la zeta cobre vida es ver qué le pasa a cada término 1/nˢ cuando s es complejo:</p>
+<div class="formula">1/nˢ = n<sup>−σ</sup> · ( cos(t·ln n) − i·sin(t·ln n) )<small>σ fija el <b>tamaño</b> del término (n<sup>−σ</sup>). t fija su <b>ángulo</b> (−t·ln n). Cada término es una flecha.</small></div>
+<div class="note"><b>Qué es exactamente «una flecha».</b> Un número complejo a + bi es un punto del plano: a es su coordenada horizontal (eje real) y b la vertical (eje imaginario). La «flecha» es el segmento que va del origen a ese punto. Tiene un <b>largo</b> (el módulo, √(a² + b²)) y una <b>dirección</b> (el ángulo con el eje real, el argumento). Para el término 1/nˢ se calculan así:
+<div class="formula" style="font-size:16px;margin:10px 0">1/nˢ = n<sup>−s</sup> = e<sup>−s·ln n</sup> = e<sup>−σ·ln n</sup> · e<sup>−i·t·ln n</sup> = n<sup>−σ</sup> · (cos(t·ln n) − i·sin(t·ln n))<small>El último paso es la fórmula de Euler, e<sup>iθ</sup> = cos θ + i·sin θ. Por tanto, largo |1/nˢ| = n<sup>−σ</sup> y ángulo = −t·ln n radianes.</small></div>
+<b>Ejemplo:</b> n = 2 y s = 0,5 + 8i. Largo: 2<sup>−0,5</sup> = 0,707. Ángulo: −8 × ln 2 = −5,545 rad, que es lo mismo que +0,738 rad (42°), porque sumar una vuelta completa (2π) no cambia la dirección. La flecha acaba en (0,707·cos 0,738; 0,707·sin 0,738) = (0,523; 0,476). La primera flecha, n = 1, siempre es (1; 0), porque 1ˢ = 1. «Sumar la serie» es poner cada flecha a continuación de la anterior: la suma de N términos es el punto donde acaba la flecha N.</div>
+<p>Sumar la serie es encadenar flechas, una detrás de otra. Con t = 0 todas apuntan a la derecha y la suma solo crece. Con t ≠ 0 cada flecha gira un poco más que la anterior, y la cadena se enrosca: los términos empiezan a <b>cancelarse</b> entre sí. Ese giro es la razón de todo lo que viene después.</p>
+<div class="card">
+<div class="ctrl"><label for="p-sig">Parte real σ</label><input type="range" id="p-sig" min="0.2" max="2.5" step="0.05" value="1.2"><output id="p-sigo">1,20</output></div>
+<div class="ctrl"><label for="p-t">Parte imaginaria t</label><input type="range" id="p-t" min="0" max="40" step="0.25" value="8"><output id="p-to">8,00</output></div>
+<div class="ctrl"><label for="p-n">Flechas (términos)</label><input type="range" id="p-n" min="1" max="120" step="1" value="40"><output id="p-no">40</output></div>
+<div class="ctrl"><label>Signos</label><div class="btns" style="margin:0"><button id="p-one" class="on">todos +</button><button id="p-alt">alternos ± (eta)</button></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>cadena de flechas (sumas parciales)</span><span><i class="dot" style="background:var(--orange)"></i>último punto</span><span><i class="dot" style="background:var(--teal)"></i>valor exacto de ζ(s) (vía continuación)</span></div>
+<canvas class="plane" id="cPlane" width="760" height="520"></canvas>
+<div class="grid">
+<div class="stat"><div class="l">Suma parcial (parte real)</div><div class="v" id="p-re">0</div></div>
+<div class="stat"><div class="l">Suma parcial (parte imaginaria)</div><div class="v" id="p-im">0</div></div>
+<div class="stat"><div class="l">Última flecha: longitud n<sup>−σ</sup></div><div class="v" id="p-len">0</div></div>
+<div class="stat"><div class="l">Última flecha: ángulo −t·ln n</div><div class="v" id="p-ang">0</div></div>
+</div>
+<p class="sub" id="p-msg"></p>
+</div>
+<div class="card">
+<h3 style="margin-top:0">La cadena de flechas y la línea de los ceros</h3>
+<p class="sub">Ahora une las dos cosas. A la izquierda, el punto s = σ + it en la franja crítica, con los ceros en la línea ½. A la derecha, la cadena de flechas de la serie <b>alterna</b> 1 − 1/2ˢ + 1/3ˢ − … en ese punto (la que sí converge dentro de la franja) y, en verde, el camino que va dejando su punto final al subir t. Pulsa «Subir por la línea»: cada vez que el punto pasa por un cero, la cadena termina exactamente en el centro. Como η(s) = (1 − 2¹⁻ˢ)·ζ(s), dentro de la franja η y ζ valen cero en los mismos puntos.</p>
+<div class="ctrl"><label for="e-s">Parte real σ</label><input type="range" id="e-s" min="0.2" max="0.9" step="0.01" value="0.5"><output id="e-so">0,50</output></div>
+<div class="ctrl"><label for="e-t">Altura t</label><input type="range" id="e-t" min="0" max="45" step="0.01" value="14.13"><output id="e-to">14,13</output></div>
+<div class="btns"><button id="e-play">▶ Subir por la línea</button><button data-et="14.134725">1.er cero</button><button data-et="21.02204">2.º cero</button><button data-et="25.010858">3.er cero</button><button data-et="0">t = 0</button></div>
+<div class="legend"><span><i class="sw" style="background:var(--orange)"></i>ceros (en σ = ½)</span><span><i class="sw" style="background:var(--blue)"></i>cadena de flechas alterna</span><span><i class="sw" style="background:var(--teal)"></i>camino del punto final al subir t</span></div>
+<canvas class="plane" id="cEta" width="760" height="440"></canvas>
+<div class="grid">
+<div class="stat"><div class="l">Punto s</div><div class="v" id="e-pt" style="font-size:16px">—</div></div>
+<div class="stat"><div class="l">Final de la cadena |η(s)|</div><div class="v" id="e-eta">0</div></div>
+<div class="stat"><div class="l">|ζ(s)|</div><div class="v" id="e-z">0</div></div>
+</div>
+<p class="sub" id="e-msg"></p>
+</div>
+<h3>Qué aporta esto a la corrección de los primos (despacio)</h3>
+<p>Más adelante (sección 9) verás que la corrección de la escalera se construye con potencias <b>x<sup>ρ</sup></b>, donde ρ es un cero de la zeta. Pero ¿qué significa elevar un número normal x a un número complejo ρ = σ + it? Se hace en dos pasos, y cada paso lo hace una parte de ρ:</p>
+<div class="formula">x<sup>ρ</sup> = x<sup>σ + it</sup> = x<sup>σ</sup> · x<sup>it</sup> = x<sup>σ</sup> · ( cos(t·ln x) + i·sin(t·ln x) )<small>Paso 1: x<sup>σ</sup> es una potencia normal, un número real que crece con x. Paso 2: x<sup>it</sup> es un giro de ángulo t·ln x, un punto en la circunferencia de radio 1. El producto es una flecha de longitud x<sup>σ</sup> girada t·ln x radianes.</small></div>
+<p><b>Ejemplo numérico</b> con el primer cero, σ = 0,5 y t = 14,13:</p>
+<ul>
+<li>En x = 100: tamaño 100<sup>0,5</sup> = 10; ángulo 14,13 × ln 100 = 14,13 × 4,605 = 65,1 rad; cos(65,1) = −0,64. Parte real de x<sup>ρ</sup>: 10 × (−0,64) = <b>−6,4</b>.</li>
+<li>En x = 400: tamaño 400<sup>0,5</sup> = 20; ángulo 14,13 × 5,991 = 84,7 rad; cos(84,7) = −0,99. Parte real: 20 × (−0,99) = <b>−19,8</b>.</li>
+</ul>
+<p>Entre 100 y 400 el tamaño ha doblado (porque √x dobla al multiplicar x por 4), mientras el ángulo ha avanzado 19,6 rad, unas tres vueltas más. El tamaño lo decide σ; las vueltas las decide t. Abajo lo ves en tres pisos: el tamaño solo, la oscilación sola, y el producto, que es la onda.</p>
+<div class="card">
+<div class="ctrl"><label for="q-s">σ del cero (tamaño)</label><input type="range" id="q-s" min="0.1" max="0.95" step="0.05" value="0.5"><output id="q-so">0,50</output></div>
+<div class="ctrl"><label for="q-t">t del cero (giro)</label><input type="range" id="q-t" min="1" max="40" step="0.25" value="14.13"><output id="q-to">14,13</output></div>
+<div class="ctrl"><label for="q-x">Punto x que miras</label><input type="range" id="q-x" min="2" max="400" step="1" value="100"><output id="q-xo">100</output></div>
+<div class="grid">
+<div class="stat"><div class="l">Paso 1: tamaño x<sup>σ</sup></div><div class="v" id="q-size">0</div></div>
+<div class="stat"><div class="l">Paso 2: ángulo t·ln x</div><div class="v" id="q-ang">0</div></div>
+<div class="stat"><div class="l">cos(ángulo)</div><div class="v" id="q-cos">0</div></div>
+<div class="stat"><div class="l">Producto: parte real de x<sup>ρ</sup></div><div class="v" id="q-val">0</div></div>
+</div>
+<div class="legend"><span><i class="sw" style="background:var(--orange)"></i>piso 1: tamaño x<sup>σ</sup> (solo σ)</span></div>
+<div class="chart" style="height:150px"><canvas id="cQ1"></canvas></div>
+<div class="legend"><span><i class="sw" style="background:var(--teal)"></i>piso 2: oscilación cos(t·ln x) (solo t)</span></div>
+<div class="chart" style="height:150px"><canvas id="cQ2"></canvas></div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>piso 3: producto = la onda del cero</span><span><i class="dot" style="background:var(--red)"></i>el x que miras</span></div>
+<div class="chart" style="height:190px"><canvas id="cQ3"></canvas></div>
+<p class="sub" id="q-msg"></p>
+</div>
+<p><b>Y ahora la conexión con la conclusión.</b> Los primos aparecen a saltos irregulares. Para dibujar saltos con funciones lisas hacen falta oscilaciones (piso 2), y las oscilaciones las da la parte imaginaria t. Pero una oscilación sin control de tamaño podría crecer y destrozar la cuenta; el tamaño (piso 1) lo controla la parte real σ. Por eso había que ir al plano complejo: una variable real solo sabe crecer o decrecer; una compleja además gira. La hipótesis de Riemann no dice nada de los giros (los t son los que son, irregulares); dice que <b>todos los tamaños crecen exactamente como √x</b>, ni más ni menos. Si lo tienes claro, el resto de la página es solo ver cómo se suman estas ondas.</p>
+</section>
+
+<section id="continuar">
+<span class="num">Sección 6</span>
+<h2>Continuación analítica: cruzar el muro</h2>
+<p>La suma 1 + 1/2ˢ + 1/3ˢ + … solo vale para σ &gt; 1. Pero una función «suave» (analítica) tiene una propiedad asombrosa: si la conoces en una región, queda determinada de forma única en todas partes a donde pueda extenderse. Es como conocer un tramo de una curva perfectamente lisa: solo hay una manera de continuarla sin romper la suavidad.</p>
+<p>Un truco concreto para cruzar: la serie <b>alterna</b> η(s) = 1 − 1/2ˢ + 1/3ˢ − 1/4ˢ + … sí converge para todo σ &gt; 0 (lo viste en la sección 5: al alternar signos la cadena se enrosca y se cierra). Y se demuestra que η(s) = (1 − 2¹⁻ˢ) · ζ(s). Despejando, ζ(s) = η(s) / (1 − 2¹⁻ˢ), que ya tiene sentido en toda la franja 0 &lt; σ &lt; 1. Esa franja se llama <b>franja crítica</b>.</p>
+<details class="razon"><summary>Razonamiento: de dónde sale η(s) = (1 − 2¹⁻ˢ)·ζ(s), y la ecuación funcional</summary>
+<ol>
+<li>Resta las dos series. Los términos impares se cancelan y los pares aparecen dos veces:<div class="eqn">ζ(s) − η(s) = 2·(1/2ˢ + 1/4ˢ + 1/6ˢ + …) = 2·2<sup>−s</sup>·(1 + 1/2ˢ + 1/3ˢ + …) = 2<sup>1−s</sup>·ζ(s)</div></li>
+<li>Despejando: η(s) = (1 − 2<sup>1−s</sup>)·ζ(s). La igualdad se prueba para σ &gt; 1, donde convergen las dos, y se extiende por continuación analítica: dos funciones analíticas que coinciden en una región coinciden en todo su dominio.</li>
+<li>El factor 1 − 2<sup>1−s</sup> solo se anula cuando 2<sup>1−s</sup> = 1, es decir, en s = 1 + 2πik/ln 2, todos sobre la recta σ = 1. Por tanto, <b>dentro de la franja 0 &lt; σ &lt; 1, ζ(s) = 0 exactamente cuando η(s) = 0</b>. Por eso la cadena alterna sirve para ver los ceros.</li>
+</ol>
+<p><b>La ecuación funcional (Riemann, 1859).</b> Para cruzar también a σ ≤ 0, Riemann definió</p>
+<div class="eqn">ξ(s) = ½·s·(s − 1)·π<sup>−s/2</sup>·Γ(s/2)·ζ(s),   y demostró que   ξ(s) = ξ(1 − s)</div>
+<p>De aquí salen tres cosas. (a) La simetría respecto de σ = ½ (nudo 2 de la sección 11). (b) Los <b>ceros triviales</b>: Γ(s/2) tiene polos en s = 0, −2, −4, −6…, y como ξ es finita, ζ tiene que anularse en −2, −4, −6… para compensarlos (en s = 0 lo compensa el factor s). (c) Los ceros de ξ son exactamente los ceros no triviales de ζ: los de la franja.</p>
+</details>
+<div class="card">
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>suma directa (donde converge)</span><span><i class="sw" style="border-top:2px dashed var(--orange)"></i>ζ(s) continuada vía η(s)</span></div>
+<div class="chart" style="height:260px"><canvas id="cCont"></canvas></div>
+<p class="sub">Las dos curvas coinciden a la derecha de 1. A la izquierda solo sobrevive la naranja: la misma función, ahora definida donde la suma ya no sirve. Con más trucos (la ecuación funcional de Riemann) se extiende a todo el plano salvo s = 1, y salen cosas como ζ(−1) = −1/12 o ζ(0) = −½: no son «sumas», son los valores de la función extendida.</p>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Calculadora de ζ(s) en el plano complejo</h3>
+<p class="sub">Escribe σ (entre 0,05 y 4) y t (entre 0 y 60). Prueba σ = 0,5 y t = 14,1347 y mira qué sale.</p>
+<div class="ctrl" style="flex-wrap:wrap"><label for="z-sig">σ (parte real)</label><input type="number" id="z-sig" step="0.01" min="0.05" max="4" value="0.5"><label for="z-t" style="min-width:0">t (imaginaria)</label><input type="number" id="z-t" step="0.0001" min="0" max="60" value="14.1347"><button id="z-go">Calcular</button></div>
+<div class="grid">
+<div class="stat"><div class="l">Parte real de ζ(s)</div><div class="v" id="z-re">—</div></div>
+<div class="stat"><div class="l">Parte imaginaria</div><div class="v" id="z-im">—</div></div>
+<div class="stat"><div class="l">Tamaño |ζ(s)|</div><div class="v" id="z-abs">—</div></div>
+</div>
+<div class="btns"><button data-z="2,0">ζ(2)</button><button data-z="0.5,14.134725">1.er cero</button><button data-z="0.5,21.02204">2.º cero</button><button data-z="0.5,25.010858">3.er cero</button><button data-z="0.7,14.134725">0,7 + 14,13i</button><button data-z="0.5,0">ζ(½)</button></div>
+<p class="sub" id="z-msg"></p>
+</div>
+</section>
+
+<section id="ceros">
+<span class="num">Sección 7</span>
+<h2>Los ceros: dónde la zeta toca el suelo</h2>
+<p>Ya tenemos la zeta definida en toda la franja crítica. Ahora buscamos sus <b>ceros</b>: los puntos s donde ζ(s) = 0. Hay unos «triviales» en −2, −4, −6… que no interesan. Los importantes están dentro de la franja, y los primeros aparecen a alturas t = 14,13; 21,02; 25,01; 30,42… todos con σ = ½.</p>
+<div class="card">
+<h3 style="margin-top:0">Mapa del plano: triviales, franja, polo y ceros de Riemann</h3>
+<svg class="map" viewBox="0 0 760 420" role="img" aria-label="Plano complejo: ceros triviales en −2, −4, −6 sobre el eje real; franja crítica entre 0 y 1; polo en s = 1; ceros no triviales en la línea ½ a alturas ±14,13, ±21,02, ±25,01, ±30,42; en t = 0 la zeta vale −1,46">
+<rect x="520" y="20" width="70" height="380" fill="var(--tint)"/>
+<line x1="20" y1="210" x2="740" y2="210" stroke="var(--muted)" stroke-width="1.5"/><line x1="520" y1="400" x2="520" y2="16" stroke="var(--muted)" stroke-width="1.5"/>
+<line x1="555" y1="20" x2="555" y2="400" stroke="var(--teal)" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="740" y="232" text-anchor="end" font-size="13" fill="var(--muted)">parte real σ</text><text x="512" y="50" text-anchor="end" font-size="13" fill="var(--muted)">altura t</text>
+<g font-size="13" fill="var(--muted)" text-anchor="middle"><text x="100" y="232">−6</text><text x="240" y="232">−4</text><text x="380" y="232">−2</text><text x="512" y="232">0</text><text x="590" y="232">1</text><text x="555" y="418" fill="var(--teal)">½</text></g>
+<g fill="var(--blue)"><circle cx="100" cy="210" r="7"/><circle cx="240" cy="210" r="7"/><circle cx="380" cy="210" r="7"/></g>
+<text x="240" y="258" text-anchor="middle" font-size="15" font-weight="600" fill="var(--blue)">ceros triviales: −2, −4, −6…</text><text x="240" y="278" text-anchor="middle" font-size="13" fill="var(--ink2)">en el eje real, fuera de la franja; no dicen nada de los primos</text>
+<circle cx="590" cy="210" r="6" fill="none" stroke="var(--red)" stroke-width="2"/><text x="600" y="198" font-size="12" fill="var(--red)">polo s = 1</text>
+<circle cx="555" cy="210" r="8" fill="none" stroke="var(--ink)" stroke-width="2"/><text x="608" y="252" font-size="13" fill="var(--ink)">ζ(½) = −1,46 ≠ 0</text>
+<g fill="var(--orange)"><circle cx="555" cy="124" r="6"/><circle cx="555" cy="83" r="6"/><circle cx="555" cy="59" r="6"/><circle cx="555" cy="26" r="6"/><circle cx="555" cy="296" r="6"/><circle cx="555" cy="337" r="6"/><circle cx="555" cy="361" r="6"/><circle cx="555" cy="394" r="6"/></g>
+<g font-size="12" fill="var(--orange)"><text x="566" y="128">14,13</text><text x="566" y="87">21,02</text><text x="566" y="63">25,01</text><text x="566" y="30">30,42</text><text x="566" y="300">−14,13</text><text x="566" y="341">−21,02</text><text x="566" y="365">−25,01</text><text x="566" y="398">−30,42</text></g>
+<text x="505" y="90" text-anchor="end" font-size="15" font-weight="600" fill="var(--orange)">ceros de Riemann (no triviales)</text><text x="505" y="110" text-anchor="end" font-size="13" fill="var(--ink2)">todos los conocidos, en la línea ½</text>
+<text x="505" y="345" text-anchor="end" font-size="13" fill="var(--ink2)">cada uno con su pareja en −t</text>
+<text x="555" y="14" text-anchor="middle" font-size="12" fill="var(--muted)">franja crítica 0 &lt; σ &lt; 1</text>
+</svg>
+<p class="sub"><b>Cómo leer el mapa.</b> Cada punto del dibujo es un número complejo s = σ + it. La posición horizontal es σ (la parte real) y la vertical es t (la altura). La línea horizontal del centro es el <b>eje real</b>: ahí t = 0 y s es un número normal, como −2 o 0,5. La banda sombreada es la <b>franja crítica</b>, entre σ = 0 y σ = 1, y la línea discontinua verde es la <b>línea crítica</b>, σ = ½. Un punto naranja o azul marca un lugar donde ζ(s) = 0.</p>
+<ul class="sub" style="padding-left:18px">
+<li><b>Los puntos azules, a la izquierda (−2, −4, −6…), son los ceros triviales.</b> Están sobre el eje real, con t = 0, y muy lejos de la franja. Se llaman «triviales» porque se sabe exactamente dónde están y por qué: los fuerza la ecuación funcional de Riemann (ver «Razonamiento» de la sección 6). No dicen nada sobre los primos, y la hipótesis no habla de ellos.</li>
+<li><b>Los puntos naranjas, sobre la línea ½, son los ceros de Riemann o no triviales.</b> Son los que importan. Ninguno está sobre el eje: el más bajo está a la altura t = 14,13. En el punto donde la línea ½ cruza el eje (el círculo negro, s = ½), la zeta vale ζ(½) = −1,46, que no es cero. Por eso no hay que confundir «la línea ½» con «el cero de la línea»: los ceros están más arriba (y más abajo).</li>
+<li><b>Van por parejas, uno arriba y otro abajo.</b> Si ζ(½ + 14,13i) = 0, también ζ(½ − 14,13i) = 0. La razón es que ζ tiene coeficientes reales: el valor en el punto reflejado respecto del eje es el conjugado del valor original, y el conjugado de 0 es 0. Por eso el dibujo es simétrico arriba y abajo, y basta con estudiar la mitad de arriba.</li>
+<li><b>El círculo rojo en σ = 1 es el polo:</b> el único punto donde ζ no tiene valor, porque se va al infinito. Es el «muro» de la sección 4.</li>
+</ul>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Subir por una recta vertical</h3>
+<p class="sub">La gris recorre σ = ½ y toca el cero una y otra vez. Mueve la azul a otra σ: nunca llega a cero. Toca la curva para ver ζ en ese punto.</p>
+<div class="ctrl"><label for="c-s">Recta azul en σ =</label><input type="range" id="c-s" min="0.1" max="0.95" step="0.05" value="0.7"><output id="c-so">0,70</output></div>
+<div class="ctrl"><label for="c-T">Altura máxima</label><input type="range" id="c-T" min="30" max="60" step="5" value="45"><output id="c-To">45</output></div>
+<div class="grid"><div class="stat"><div class="l">Mínimo de |ζ| en σ = ½</div><div class="v" id="c-mh">0</div></div><div class="stat"><div class="l" id="c-ml">Mínimo de |ζ| en σ = 0,70</div><div class="v" id="c-ms">0</div></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--gray)"></i>|ζ(½ + it)|</span><span><i class="sw" style="border-top:2px dashed var(--blue)"></i>|ζ(σ + it)| en la σ elegida</span><span><i class="dot" style="background:var(--orange)"></i>ceros</span></div>
+<div class="chart"><canvas id="cLine"></canvas></div>
+</div>
+<div class="card">
+<h3 style="margin-top:0">La franja crítica en 3D</h3>
+<p class="sub">Altura = |ζ(s)|. La superficie toca el suelo solo sobre la línea naranja (σ = ½). Arrastra para girar.</p>
+<div id="p3d" style="width:100%;height:440px"></div>
+</div>
+<p>Se han comprobado por ordenador más de diez billones de ceros y todos están en σ = ½. Pero comprobar no es demostrar: la franja es infinita hacia arriba y bastaría un solo cero fuera de la línea, por muy alto que estuviera, para que la hipótesis fuera falsa. Por eso demostrar la hipótesis no consiste en encontrar todos los ceros, que son infinitos, sino en probar que ninguno se sale de la línea.</p>
+</section>
+
+<section id="volumen">
+<span class="num">Sección 8</span>
+<h2>Altura y volumen: qué hace cada parte del cero con la escalera</h2>
+<p>La escalera de los primos tiene dos cosas que describir: <b>dónde</b> caen los saltos y <b>cuánto</b> se desvía de la curva lisa de Gauss. Cada cero ρ = σ + it aporta una onda, y cada parte del cero se encarga de una de esas dos cosas.</p>
+<div class="twocol">
+<div class="card" style="margin:0"><h3 style="margin-top:0">Altura t → dónde caen los saltos</h3><p class="sub">La onda oscila como cos(t · ln x). t es la <b>frecuencia</b>: entre x = 2 y x = 100, con t = 14 da unas 9 oscilaciones; con t = 50, unas 31. Los ceros bajos dibujan la forma gruesa (zonas con más o menos primos); los altos afinan hasta que cada salto cae en su primo. Por eso sumar más ceros hace la escalera más nítida. La altura no dice nada sobre cuánto se aleja la escalera de la curva lisa, solo sobre dónde ondula.</p></div>
+<div class="card" style="margin:0"><h3 style="margin-top:0">Volumen σ → cuánto se aleja de Gauss</h3><p class="sub">La misma onda tiene amplitud proporcional a x^σ. No cambia dónde oscila, solo <b>cuánto</b>. Con σ = ½ la amplitud crece como √x: en un millón, del orden de 1.000 frente a 78.498 primos. Con σ = 0,8 sería del orden de 63.000: una sola onda arrastraría la escalera lejos de la curva de Gauss. σ es lo que controla el <b>error</b> de Gauss, y por eso la hipótesis habla solo de σ.</p></div>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Mueve t y σ por separado con la escalera delante</h3>
+<p class="sub">La gris es la corrección real (escalera − curva lisa). La azul es una onda con la altura y el volumen que elijas; aquí t puede tomar cualquier valor, no solo los de los ceros reales, para que veas el efecto puro de cada parte.</p>
+<div class="ctrl"><label for="v-t">Altura t (frecuencia)</label><input type="range" id="v-t" min="2" max="60" step="0.25" value="14.13"><output id="v-to">14,13</output></div>
+<div class="ctrl"><label for="v-s">Volumen σ (amplitud)</label><input type="range" id="v-s" min="0.1" max="0.95" step="0.05" value="0.5"><output id="v-so">0,50</output></div>
+<div class="grid"><div class="stat"><div class="l">Oscilaciones entre 2 y 100</div><div class="v" id="v-osc">0</div></div><div class="stat"><div class="l">Amplitud de la onda en x = 100</div><div class="v" id="v-amp">0</div></div><div class="stat"><div class="l">Amplitud que tendría en 10⁶</div><div class="v" id="v-big">0</div></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--gray)"></i>corrección real de la escalera</span><span><i class="sw" style="background:var(--blue)"></i>onda con esa t y esa σ</span><span><i class="dot" style="background:var(--teal)"></i>primos</span></div>
+<div class="chart"><canvas id="cVol"></canvas></div>
+<p class="sub" id="v-msg"></p>
+</div>
+<div class="note"><b>En una frase.</b> t coloca los escalones; σ decide cuánto se separa la escalera de la curva lisa. La hipótesis de Riemann dice que todos los σ valen ½: la separación es siempre la mínima posible.</div>
+</section>
+
+<section id="ondas">
+<span class="num">Sección 9</span>
+<h2>De los ceros a los primos: la fórmula explícita</h2>
+<p>Riemann demostró una igualdad exacta entre la cuenta de primos y los ceros. Se escribe mejor con una versión «ponderada» de la cuenta, ψ(x), que suma ln p por cada potencia de primo hasta x (es la misma escalera, con escalones de altura ln p en lugar de 1):</p>
+<div class="formula">ψ(x) = x − Σ<sub>ρ</sub> x<sup>ρ</sup>/ρ − ln 2π − ½·ln(1 − x⁻²)<small>Parte lisa (x) menos una <b>onda por cada cero ρ</b>. La suma recorre todos los ceros de la franja.</small></div>
+<details class="razon"><summary>Razonamiento: cómo se llega a la fórmula explícita (von Mangoldt, 1895), y de ψ a π</summary>
+<ol>
+<li><b>Una serie que cuenta primos.</b> El logaritmo del producto de Euler, derivado, da −ζ′/ζ(s) = Σ Λ(n)·n<sup>−s</sup>, donde Λ(n) vale ln p en las potencias de primo p<sup>k</sup> y 0 en el resto (ver sección 3).</li>
+<li><b>Fórmula de Perron.</b> Una integral en vertical «corta» la serie en x: vale 1 si n &lt; x y 0 si n &gt; x. Por eso:<div class="eqn">ψ(x) = Σ<sub>n≤x</sub> Λ(n) = (1/2πi) ∫<sub>c−i∞</sub><sup>c+i∞</sup> (−ζ′(s)/ζ(s)) · xˢ/s ds,   c &gt; 1</div></li>
+<li><b>Mover la recta de integración hacia la izquierda</b> y sumar los residuos de cada punto donde el integrando explota. Cada uno aporta un término:
+<ul><li>el polo de ζ en s = 1 aporta <b>+x</b> (la parte lisa);</li>
+<li>cada cero ρ aporta <b>−x<sup>ρ</sup>/ρ</b> (una onda);</li>
+<li>s = 0 aporta <b>−ln 2π</b>, porque ζ′(0)/ζ(0) = ln 2π;</li>
+<li>los ceros triviales −2, −4… aportan Σ x<sup>−2k</sup>/2k = <b>−½·ln(1 − x<sup>−2</sup>)</b>.</li></ul></li>
+<li><b>De ψ a π.</b> Riemann usó J(x) = Σ<sub>k≥1</sub> π(x<sup>1/k</sup>)/k, la cuenta de primos y sus potencias con peso 1/k, que se obtiene de ψ dividiendo cada escalón por su logaritmo. Por inversión de Möbius:<div class="eqn">π(x) = Σ<sub>k≥1</sub> μ(k)/k · J(x<sup>1/k</sup>) = J(x) − ½J(√x) − ⅓J(∛x) − ⅕J(x<sup>1/5</sup>) + ⅙J(x<sup>1/6</sup>) − …</div>Resultado: π(x) ≈ Li(x) − Σ<sub>ρ</sub> Li(x<sup>ρ</sup>) − ½·Li(√x) + … Una corrección por cada cero, igual que en ψ, pero más difícil de dibujar. Por eso aquí se usa ψ.</li>
+</ol>
+<p><b>El tamaño de cada onda.</b> |x<sup>ρ</sup>/ρ| = x<sup>σ</sup>/|ρ|. Con los dos ceros conjugados ρ y ρ̄ juntos, la onda es real y mide como mucho 2·x<sup>σ</sup>/|ρ|. Ese es el «volumen ±2x<sup>σ</sup>/|ρ|» del gráfico de abajo.</p>
+</details>
+<p>Cada onda x<sup>ρ</sup>/ρ es la que estudiaste en las secciones 5 y 8: oscila con frecuencia t y tiene volumen x<sup>σ</sup>. Por separado ninguna sabe dónde están los primos. Sumadas, se refuerzan justo en los primos y se anulan en el resto.</p>
+<div class="card">
+<h3 style="margin-top:0">Una onda sola</h3>
+<div class="ctrl"><label for="w-k">Cero número</label><input type="range" id="w-k" min="1" max="30" step="1" value="1"><output id="w-ko">1</output></div>
+<div class="ctrl"><label for="w-s">Parte real σ del cero</label><input type="range" id="w-s" min="0.5" max="0.95" step="0.05" value="0.5"><output id="w-so">0,50</output></div>
+<div class="ctrl"><label for="w-X">Hasta x =</label><input type="range" id="w-X" min="2" max="4" step="0.5" value="3"><output id="w-Xo">1.000</output></div>
+<div class="grid"><div class="stat"><div class="l">Altura t del cero</div><div class="v" id="w-g">0</div></div><div class="stat"><div class="l">Volumen de la onda en x máx.</div><div class="v" id="w-a">0</div></div><div class="stat"><div class="l">Primos hasta x máx.</div><div class="v" id="w-p">0</div></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>onda del cero</span><span><i class="sw" style="border-top:2px dashed var(--gray)"></i>volumen ±2x<sup>σ</sup>/|ρ|</span></div>
+<div class="chart"><canvas id="cWave"></canvas></div>
+<p class="sub">Sube el cero: la onda se acelera y se hace algo más pequeña (los ceros altos aportan el detalle fino). Sube σ: el volumen se dispara. Toca la curva para ver el cálculo de la onda en un x.</p>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Sumar ondas y reconstruir la escalera</h3>
+<div class="ctrl"><label for="r-n">Ceros sumados</label><input type="range" id="r-n" min="0" max="50" step="1" value="10"><output id="r-no">10</output></div>
+<div class="ctrl"><label for="r-X">Hasta x =</label><input type="range" id="r-X" min="0" max="3" step="1" value="1"><output id="r-Xo">100</output></div>
+<div class="ctrl"><label for="r-s">Mover el 1.er cero a σ =</label><input type="range" id="r-s" min="0.5" max="0.95" step="0.05" value="0.5"><output id="r-so">0,50</output></div>
+<div class="ctrl"><label>Ver</label><div class="btns" style="margin:0"><button id="r-full" class="on">escalera completa</button><button id="r-gap">solo la corrección</button></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--gray)"></i>escalera real ψ(x)</span><span><i class="sw" style="border-top:2px dashed var(--blue)"></i>parte lisa + ondas de los ceros</span><span><i class="dot" style="background:var(--teal)"></i>primos</span></div>
+<div class="chart tall"><canvas id="cRec"></canvas></div>
+<div class="grid"><div class="stat"><div class="l">Error medio de la reconstrucción</div><div class="v" id="r-err">0</div></div><div class="stat"><div class="l">Error máximo</div><div class="v" id="r-max">0</div></div></div>
+<p class="sub" id="r-msg"></p>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Solo las oscilaciones: picos en los primos</h3>
+<p class="sub">Otra forma de verlo. Quita la parte lisa y suma únicamente las oscilaciones de los ceros, −Σ cos(t · ln x). Con pocos ceros no se ve nada; con muchos aparecen picos justo en los primos (2, 3, 5, 7, 11…) y, más bajos, en sus potencias (4, 8, 9).</p>
+<div class="ctrl"><label for="k2-n">Ceros sumados</label><input type="range" id="k2-n" min="1" max="50" step="1" value="50"><output id="k2-no">50</output></div>
+<div class="legend"><span><i class="sw" style="background:var(--teal)"></i>−Σ cos(t · ln x)</span><span><i class="dot" style="background:var(--orange)"></i>primos</span><span><i class="dot" style="background:var(--blue)"></i>potencias de primos</span></div>
+<div class="chart" style="height:260px"><canvas id="cSpk"></canvas></div>
+</div>
+<div class="card">
+<h3 style="margin-top:0">Las ondas en 3D: de atrás hacia delante</h3>
+<p class="sub">Cada fila naranja del fondo es la onda de un cero, situada a su altura t. En la fila delantera se suman (azul) y se comparan con la corrección real (gris). Los puntos verdes son los primos.</p>
+<div class="ctrl"><label for="t-k">Ondas sumadas</label><input type="range" id="t-k" min="1" max="20" step="1" value="20"><output id="t-ko">20</output></div>
+<div id="p3w" style="width:100%;height:460px"></div>
+</div>
+</section>
+
+<section id="hipotesis">
+<span class="num">Sección 10</span>
+<h2>La hipótesis de Riemann</h2>
+<div class="formula">Todos los ceros no triviales de ζ(s) tienen parte real σ = ½<small>Enunciada en 1859. Sin demostrar. Uno de los siete Problemas del Milenio.</small></div>
+<p>Ahora puedes leerla con todo lo anterior. Cada cero es una onda; su parte real σ es el volumen de esa onda, que crece como x<sup>σ</sup>. Si todos los ceros están en ½, cada onda crece solo como √x, la suma de todas queda acotada por algo del orden de √x · ln x, y la curva de Gauss nunca se aleja más que eso de la escalera real. Los primos estarían repartidos de la forma <b>más regular que permite el azar</b>.</p>
+<p>Si existiera un cero con σ = 0,8, su onda crecería como x⁰·⁸. En un millón eso es 63.000 frente a 1.000: una sola onda desmesurada que arrastraría la escalera lejos de la curva, con tramos llenos de primos y tramos casi vacíos. Vuelve al experimento de la sección 9 y mueve el primer cero: eso es lo que verías.</p>
+<details class="razon"><summary>Razonamiento: por qué «todos en ½» equivale a «error ≤ √x · ln x» (von Koch, 1901)</summary>
+<ol>
+<li><b>Fórmula explícita truncada.</b> Sumando solo los ceros con altura |t| &lt; T se comete un error controlado:<div class="eqn">ψ(x) = x − Σ<sub>|γ|&lt;T</sub> x<sup>ρ</sup>/ρ + O( x·(ln x)² / T )</div></li>
+<li><b>Si todos los σ = ½</b>, cada onda mide como mucho √x/|ρ|. El número de ceros hasta la altura T crece como (T/2π)·ln T (nudo 4), así que Σ 1/|ρ| hasta T crece como (ln T)². En total, √x·(ln T)².</li>
+<li><b>Equilibrar los dos errores</b> eligiendo T ≈ √x. Queda ψ(x) = x + O(√x·(ln x)²). Pasando de ψ a π (dividir por ln x en cada escalón) sale el resultado de von Koch:<div class="eqn">π(x) = Li(x) + O(√x · ln x)</div>Schoenfeld (1976) puso la constante: |π(x) − Li(x)| &lt; √x·ln x / 8π para x ≥ 2.657.</li>
+<li><b>El recíproco.</b> Si el error fuera siempre menor que x<sup>θ</sup> con θ &lt; 1, la serie Σ Λ(n)/nˢ menos su parte lisa convergería para σ &gt; θ, y −ζ′/ζ no podría tener polos (ceros de ζ) en σ &gt; θ. Con la simetría, eso deja todos los ceros en 1 − θ ≤ σ ≤ θ. Por tanto, error del orden de √x (más logaritmos) ⇒ todos los ceros en σ = ½.</li>
+</ol>
+<p>En resumen: <b>Θ = mayor σ de los ceros</b> y <b>exponente del error de Gauss</b> son el mismo número. La hipótesis dice que vale ½.</p>
+</details>
+<div class="card">
+<h3 style="margin-top:0">Mapa de los ceros conectado con la escalera</h3>
+<div class="ctrl"><label for="h-n">Ceros encendidos</label><input type="range" id="h-n" min="0" max="30" step="1" value="12"><output id="h-no">12</output></div>
+<div class="ctrl"><label for="h-s">1.er cero en σ =</label><input type="range" id="h-s" min="0.5" max="0.95" step="0.05" value="0.5"><output id="h-so">0,50</output></div>
+<p class="sub">Arriba, los ceros (naranja = encendido). Abajo, lo que reconstruyen frente a la escalera real hasta 60.</p>
+<div class="chart" style="height:150px"><canvas id="cMapZ"></canvas></div>
+<div class="chart" style="height:260px;margin-top:10px"><canvas id="cMapP"></canvas></div>
+<p class="sub" id="h-msg"></p>
+</div>
+<h3>Qué se sabe hoy</h3>
+<p>Se conoce desde 1896 que todos los ceros están estrictamente dentro de la franja 0 &lt; σ &lt; 1 (eso bastó para demostrar que π(x) ~ x / ln x, el teorema de los números primos). Se sabe que al menos el 40 % de los ceros están en ½ y que los primeros billones lo cumplen. En octubre de 2026 un sistema de IA de OpenAI presentó una prueba de la <b>cuasi-hipótesis</b>: todos los ceros estarían en una franja más estrecha, entre 1/8 y 7/8. Los expertos todavía la están revisando y no está publicada en una revista. Si se confirma, será un paso enorme, pero no es la hipótesis: siguen faltando los volúmenes exactos.</p>
+</section>
+
+
+<section id="nudos">
+<span class="num">Sección 11</span>
+<h2>Los nudos difíciles, uno a uno, y qué aporta cada uno a la conclusión</h2>
+<p>Hay cuatro puntos del recorrido que suelen quedar en el aire. Cada uno responde a una pregunta concreta, y cada respuesta recorta la zona donde pueden estar los ceros. Al final, lo único que queda sin demostrar es la línea exacta.</p>
+
+<div class="card">
+<h3 style="margin-top:0">Nudo 1 · ¿Por qué no hay ceros a la derecha de σ = 1?</h3>
+<p class="sub">Para σ &gt; 1 vale el producto de Euler: ζ(s) = Π 1/(1 − p<sup>−s</sup>). Cada factor es un número distinto de cero, y un producto convergente de factores no nulos no puede valer cero. Se demuestra incluso una cota: |ζ(σ + it)| ≥ ζ(2σ)/ζ(σ) &gt; 0, pase lo que pase con t. <b>Aporta:</b> los ceros solo pueden estar en σ ≤ 1. Mueve σ y comprueba que la curva nunca baja de la línea gris.</p>
+<div class="ctrl"><label for="n1-s">σ (mayor que 1)</label><input type="range" id="n1-s" min="1.05" max="2.5" step="0.05" value="1.3"><output id="n1-so">1,30</output></div>
+<div class="grid"><div class="stat"><div class="l">Cota inferior ζ(2σ)/ζ(σ)</div><div class="v" id="n1-b">0</div></div><div class="stat"><div class="l">Mínimo observado de |ζ|</div><div class="v" id="n1-m">0</div></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>|ζ(σ + it)|</span><span><i class="sw" style="border-top:2px dashed var(--gray)"></i>cota ζ(2σ)/ζ(σ)</span></div>
+<div class="chart" style="height:220px"><canvas id="cN1"></canvas></div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Nudo 2 · La simetría: ½ es un espejo</h3>
+<p class="sub">Riemann demostró la <b>ecuación funcional</b>: ζ(s) y ζ(1 − s) están ligadas por una fórmula exacta (un factor con la función gamma). Consecuencia: si ρ = σ + it es un cero, también lo es 1 − ρ = (1 − σ) + it, su reflejo en la recta σ = ½; y por conjugación, también σ − it y (1 − σ) − it. Un cero fuera de la línea nunca viene solo: viene en <b>cuarteto</b>. La única posición que es su propio reflejo es σ = ½. <b>Aporta:</b> ½ no es un número caprichoso, es el eje de simetría de la franja; la hipótesis dice que no hay cuartetos, solo parejas ±t sobre el eje. Y como Θ (el mayor σ) manda en el error de Gauss, un cero en 0,2 es tan malo como uno en 0,8: trae a su gemelo.</p>
+<div class="ctrl"><label for="n2-s">σ de un cero hipotético</label><input type="range" id="n2-s" min="0.5" max="0.95" step="0.01" value="0.8"><output id="n2-so">0,80</output></div>
+<div class="grid"><div class="stat"><div class="l">Cuarteto que se formaría</div><div class="v" id="n2-q" style="font-size:15px">—</div></div><div class="stat"><div class="l">Θ resultante (peor σ)</div><div class="v" id="n2-th">0</div></div></div>
+<div class="chart" style="height:230px"><canvas id="cN2"></canvas></div>
+<p class="sub" id="n2-msg"></p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Nudo 3 · El borde σ = 1 y lo que ya está demostrado</h3>
+<p class="sub">En 1896 Hadamard y de la Vallée Poussin demostraron que tampoco hay ceros <b>sobre</b> la recta σ = 1. Con el nudo 2, tampoco sobre σ = 0. Entonces toda onda tiene σ &lt; 1, es decir, crece más despacio que x, y la parte lisa x acaba ganando a todas las ondas juntas. Eso es el <b>teorema de los números primos</b>: π(x)/Li(x) → 1. <b>Aporta:</b> la hipótesis no es «¿se parece la escalera a la curva de Gauss?» (eso ya se sabe que sí), sino «¿con qué precisión?». El gráfico muestra lo demostrado: los cocientes se acercan a 1, el de Li mucho más deprisa.</p>
+<div class="legend"><span><i class="sw" style="background:var(--orange)"></i>π(x) / Li(x)</span><span><i class="sw" style="border-top:2px dotted var(--gray)"></i>π(x) / (x / ln x)</span></div>
+<div class="chart" style="height:220px"><canvas id="cN3"></canvas></div>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">Nudo 4 · Los ceros también forman una escalera, y es muy regular</h3>
+<p class="sub">¿De dónde sale el factor ln x en la cota √x · ln x? De que las ondas son infinitas y hay que sumarlas todas. Cuenta cuántos ceros hay hasta la altura T: sale otra escalera, N(T). Riemann conjeturó y von Mangoldt demostró que N(T) ≈ (T/2π)·ln(T/2πe) + 7/8, con un error minúsculo. Hasta la altura x hay del orden de x·ln x ceros, y al sumar sus amplitudes 2√x/|ρ| aparece el logaritmo. <b>Aporta:</b> el contraste es llamativo: los primos son irregulares, pero los ceros que los describen siguen una ley casi perfecta. Toda la irregularidad de los primos está en las pequeñas desviaciones de esta escalera y en las alturas exactas. Estos 114 ceros los calcula tu navegador ahora mismo.</p>
+<div class="grid"><div class="stat"><div class="l">Ceros calculados hasta T = 260</div><div class="v" id="n4-c">0</div></div><div class="stat"><div class="l">Fórmula N(260)</div><div class="v" id="n4-f">0</div></div><div class="stat"><div class="l">Mayor desviación |N(T) − fórmula|</div><div class="v" id="n4-d">0</div></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>N(T): ceros contados</span><span><i class="sw" style="border-top:2px dashed var(--orange)"></i>fórmula de Riemann–von Mangoldt</span></div>
+<div class="chart" style="height:240px"><canvas id="cN4"></canvas></div>
+</div>
+<div class="note"><b>Juntando los cuatro nudos.</b> Sin ceros en σ &gt; 1 (nudo 1), sin ceros en σ = 1 ni σ = 0 (nudo 3), y con simetría respecto a ½ (nudo 2), los ceros viven estrictamente dentro de 0 &lt; σ &lt; 1 y en cuartetos espejo. Lo demostrado deja Θ en algún punto entre ½ y 1; la prueba de 2026, aún en revisión, lo bajaría a 7/8; la hipótesis de Riemann dice que Θ = ½, el mínimo que permite la simetría. Y el nudo 4 explica el ln x que acompaña a √x en la cota del error.</div>
+</section>
+
+<section id="musica">
+<span class="num">Sección 12</span>
+<h2>La música de los ceros: por qué los físicos también miran esto</h2>
+<p>En 1972, Hugh Montgomery estudiaba las distancias entre ceros consecutivos y se las enseñó al físico Freeman Dyson, que reconoció la fórmula al instante: era la misma que describe las distancias entre niveles de energía de un núcleo atómico pesado (las «matrices aleatorias» de tipo GUE). Los ceros de la zeta <b>se repelen</b>: casi nunca hay dos muy juntos, igual que los niveles de energía. Los números puestos al azar (Poisson) no hacen eso.</p>
+<p>Aquí tienes el experimento con los ceros que acaba de calcular tu navegador. Se mide la distancia de cada cero al siguiente, se normaliza para que la media sea 1 (los ceros se van juntando al subir) y se cuenta cuántas distancias hay de cada tamaño.</p>
+<div class="card">
+<div class="grid"><div class="stat"><div class="l">Distancias medidas</div><div class="v" id="m-n">0</div></div><div class="stat"><div class="l">Distancia normalizada más pequeña</div><div class="v" id="m-min">0</div></div><div class="stat"><div class="l">Fracción con distancia &lt; 0,3</div><div class="v" id="m-small">0</div></div></div>
+<div class="legend"><span><i class="sw" style="background:var(--blue)"></i>distancias entre ceros (histograma)</span><span><i class="sw" style="border-top:2px dashed var(--orange)"></i>predicción GUE (núcleos atómicos)</span><span><i class="sw" style="border-top:2px dotted var(--gray)"></i>puntos al azar (Poisson)</span></div>
+<div class="chart" style="height:260px"><canvas id="cM"></canvas></div>
+<p class="sub">Con 113 distancias el histograma es tosco, pero ya se ve lo esencial: cerca de 0 casi no hay barras (repulsión), mientras que la curva gris del azar tendría su máximo justo ahí. Con millones de ceros (Odlyzko, años 80) el ajuste a la curva naranja es casi perfecto.</p>
+</div>
+<p><b>Por qué esto importa para la conclusión.</b> Los niveles de energía de un sistema cuántico son siempre números reales, porque son los valores propios de un operador «hermítico». En 1914, Hilbert y Pólya sugirieron: si los ceros fueran los niveles de energía de algún sistema físico (escritos como ½ + i·E), entonces las E serían reales automáticamente y todos los ceros estarían en ½. La hipótesis de Riemann quedaría demostrada. La coincidencia con GUE es la pista más fuerte de que ese sistema existe. Nadie lo ha encontrado todavía, pero esa es una de las vías por las que se intenta.</p>
+</section>
+
+<section id="importa">
+<span class="num">Sección 13</span>
+<h2>Por qué importa resolverla</h2>
+<p>No se trata de descubrir primos nuevos ni de romper la criptografía. Se trata de saber hasta qué punto los primos son <b>predecibles</b>, y de desbloquear cientos de resultados que hoy están en suspenso.</p>
+
+<div class="card">
+<h3 style="margin-top:0">1 · Los primos serían tan «aleatorios» como permite el determinismo</h3>
+<p class="sub">Imagina que cada número n fuese primo por sorteo, con probabilidad 1/ln n (el modelo de Cramér). Su «escalera» se desviaría de Li(x) como una moneda lanzada muchas veces: del orden de √x. La hipótesis de Riemann dice que los primos reales, que no tienen nada de azar, se desvían <b>igual o menos</b> que una moneda. Compara: la curva gris es un sorteo nuevo cada vez; la naranja, los primos de verdad.</p>
+<div class="legend"><span><i class="sw" style="background:var(--orange)"></i>Li(x) − π(x), primos reales</span><span><i class="sw" style="background:var(--gray)"></i>Li(x) − cuenta de «primos al azar»</span><span><i class="sw" style="border-top:2px dashed var(--teal)"></i>±√x</span></div>
+<div class="chart" style="height:240px"><canvas id="cCr"></canvas></div>
+<div class="btns"><button id="cr-new">Nuevo sorteo</button></div>
+<p class="sub">Fíjate en que los primos reales oscilan incluso menos que el azar: la curva naranja apenas cruza el cero. Eso tiene explicación (un sesgo de las potencias de primos), pero el mensaje es el mismo: con Θ = ½, la desviación está a la escala de una moneda y no más.</p>
+</div>
+
+<div class="card">
+<h3 style="margin-top:0">2 · Garantías sobre los huecos entre primos</h3>
+<p class="sub">Si la hipótesis es cierta, después de cada primo p el siguiente llega antes de p + C·√p·ln p: no puede haber «desiertos» largos. Sin ella, lo mejor demostrado es mucho más débil (p + p<sup>0,525</sup>). Los puntos son los huecos récord reales hasta un millón; la curva gris es la garantía bajo la hipótesis; la verde punteada, (ln p)², lo que se cree que es la verdad (conjetura de Cramér). La hipótesis no da la mejor cota posible, pero da una cota <b>demostrada</b>.</p>
+<details class="razon" open><summary>Qué significa «p + C·√p·ln p», despacio</summary>
+<p>Llamemos <b>hueco</b> a la distancia entre un primo p y el siguiente. Hasta 100 los huecos son de 1, 2, 4 o 6; tras el 89 hay un hueco de 8 (el siguiente es el 97). La pregunta es: ¿cuánto puede llegar a medir el hueco después de p, como mucho?</p>
+<ul>
+<li><b>Lo que garantiza la hipótesis</b> (Cramér, 1920): existe una constante C tal que el siguiente primo siempre está antes de p + C·√p·ln p. Es decir, el hueco crece como mucho como √p·ln p.</li>
+<li><b>Por qué sale de la hipótesis.</b> En un tramo (x, x + h] esperamos unos h / ln x primos (la densidad de Gauss por la longitud). La hipótesis dice que la cuenta real se aparta de lo esperado como mucho del orden de √x·ln x. Si el tramo es tan largo que lo esperado supera claramente a ese error, el tramo no puede estar vacío. La cuenta directa da huecos menores que algo del orden de √x·(ln x)²; Cramér afinó el argumento hasta √x·ln x.</li>
+<li><b>Lo demostrado sin la hipótesis</b> (Baker, Harman y Pintz, 2001): hay siempre un primo antes de p + p<sup>0,525</sup>, para p suficientemente grande. El exponente 0,525 es mayor que el 0,5 de la raíz cuadrada, así que a la larga esta cota es peor.</li>
+<li><b>Lo que se cree que es la verdad</b> (conjetura de Cramér, 1936): los huecos no pasan de algo del orden de (ln p)², muchísimo menos.</li>
+</ul>
+<p><b>Con números, en p = 1.000.000:</b> √p·ln p = 1.000 × 13,8 ≈ 13.800; (ln p)² ≈ 191; y el hueco récord real por debajo de un millón es 114 (tras el primo 492.113). Ojo: estas cotas son asintóticas, con constantes, y valen «para p grande»; no hay que leerlas como predicciones exactas a esta escala. Lo importante es cómo crecen.</p>
+</details>
+<div class="legend"><span><i class="dot" style="background:var(--blue)"></i>hueco récord tras p</span><span><i class="sw" style="border-top:2px dashed var(--gray)"></i>√p · ln p (garantía si RH)</span><span><i class="sw" style="border-top:2px dotted var(--teal)"></i>(ln p)² (conjetura de Cramér)</span></div>
+<div class="chart" style="height:240px"><canvas id="cGap"></canvas></div>
+</div>
+
+<div class="twocol">
+<div class="card" style="margin:0"><h3 style="margin-top:0">3 · Cientos de teoremas en espera</h3><p class="sub">Hay una biblioteca de resultados que empiezan por «suponiendo la hipótesis de Riemann…» (RH) o su versión generalizada a las funciones L (GRH, ver tarjeta 5). Algunos con nombre:</p>
+<ul class="sub" style="padding-left:18px;margin:6px 0">
+<li><b>Schoenfeld (1976)</b>, con RH: |π(x) − Li(x)| &lt; √x·ln x / 8π para todo x ≥ 2.657. Una cota explícita, con número, para el error de Gauss.</li>
+<li><b>Cramér (1920)</b>, con RH: huecos entre primos de tamaño O(√p·ln p) (tarjeta 2).</li>
+<li><b>Miller (1976) y Bach (1990)</b>, con GRH: para saber si n es primo basta probar las bases hasta 2·(ln n)². El test de Miller–Rabin pasa de «probabilístico» a determinista y rápido.</li>
+<li><b>Ankeny (1952) y Bach</b>, con GRH: el menor número que no es un cuadrado módulo p es menor que 2·(ln p)². Es la base de varios algoritmos de raíces cuadradas modulares.</li>
+<li><b>Hooley (1967)</b>, con GRH: demuestra la conjetura de Artin. El 2 (y cualquier entero que no sea −1 ni un cuadrado) es raíz primitiva módulo infinitos primos, con una proporción concreta.</li>
+<li><b>Linnik y GRH</b>: el primer primo de la forma a + q·k aparece antes de un tamaño del orden de (q·ln q)².</li>
+<li><b>Hardy y Littlewood (1923)</b>, con GRH: todo impar grande es suma de tres primos. Fue el primer paso hacia la conjetura débil de Goldbach, que después se demostró sin hipótesis (Vinogradov, 1937; Helfgott, 2013).</li>
+<li><b>Equivalencias</b>: hay afirmaciones que son la hipótesis misma, dicha de otra forma. <b>Robin (1984)</b>: RH es cierta si y solo si σ(n) &lt; e<sup>γ</sup>·n·ln ln n para todo n &gt; 5.040, donde σ(n) es la suma de los divisores de n. Y la <b>función de Mertens</b>, M(x) = Σ μ(n), crece menos que x<sup>½+ε</sup> si y solo si RH es cierta.</li>
+</ul>
+<p class="sub">Demostrar la hipótesis convertiría todo eso en matemática firme de golpe. Y GRH arrastraría además todos los resultados «con GRH».</p></div>
+<div class="card" style="margin:0"><h3 style="margin-top:0">4 · Criptografía: ni la rompe ni la salva</h3><p class="sub">RSA se apoya en que factorizar es difícil, no en dónde están los ceros. Demostrar la hipótesis no daría un método de factorización. Lo que sí tocaría es la teoría que respalda cómo se generan y comprueban los primos grandes que usan esos sistemas: hoy esas garantías son «probables»; con la hipótesis serían exactas.</p></div>
+<div class="card" style="margin:0"><h3 style="margin-top:0">5 · El método valdría más que el resultado</h3><p class="sub">Casi nadie espera que la demostración sea un truco corto. Lo probable es que exija entender <b>por qué</b> los ceros están en la línea (un sistema físico oculto, una geometría nueva, como ocurrió con la versión para cuerpos finitos que demostró Deligne en 1974). Esa comprensión se aplicaría a toda la familia de funciones L, que gobiernan primos en progresiones, curvas elípticas y mucho más.</p>
+<p class="sub"><b>Qué son las funciones L.</b> La zeta es la serie de Dirichlet más simple, la de todos los coeficientes iguales a 1. Si los coeficientes son un <b>carácter de Dirichlet</b> χ(n) (una secuencia periódica y multiplicativa, por ejemplo 1, 0, −1, 0, 1, 0, −1… para separar los impares en 4k + 1 y 4k + 3), sale una función L:</p>
+<div class="formula" style="font-size:16px">L(s, χ) = Σ χ(n)/nˢ = ∏<sub>p</sub> 1 / (1 − χ(p)·p<sup>−s</sup>)<small>También tiene producto de Euler, continuación analítica, ecuación funcional y ceros en la franja crítica.</small></div>
+<p class="sub">Dirichlet las usó en 1837 para demostrar que hay infinitos primos en cada progresión a + q·k con a y q sin factores comunes. La <b>hipótesis de Riemann generalizada</b> (GRH) dice que los ceros no triviales de todas ellas están también en σ = ½. Y hay más familias. A cada curva elíptica le corresponde su función L(E, s), y la conjetura de Birch y Swinnerton-Dyer (otro Problema del Milenio) relaciona su orden de anulación en s = 1 con el número de soluciones racionales de la curva. El programa de Langlands busca un marco común para todas. La única versión de la hipótesis demostrada es la de los cuerpos finitos: las conjeturas de Weil, probadas por Deligne en 1974.</p></div>
+<div class="card" style="margin:0"><h3 style="margin-top:0">6 · Un siglo y medio de intentos</h3><p class="sub">Enunciada por Riemann en 1859 en un artículo de ocho páginas. Problema 8 de la lista de Hilbert en 1900. Problema del Milenio del Instituto Clay en 2000, con un millón de dólares. Comprobada para más de diez billones de ceros. Prueba de una cuasi-versión (franja 1/8–7/8) presentada con ayuda de IA en 2026, todavía en revisión. La línea exacta, todavía abierta.</p></div>
+</div>
+<div class="note"><b>La conclusión, dicha del todo.</b> La escalera de los primos es igual a la curva de Gauss más una onda por cada cero de la zeta. Las alturas t de los ceros fijan dónde ondula cada una; sus partes reales σ fijan cuánto. La simetría obliga a que ½ sea el centro, y lo demostrado encierra los σ entre 0 y 1 (entre 1/8 y 7/8 si se confirma la prueba de 2026). La hipótesis de Riemann afirma que todos valen exactamente ½: que los primos se desvían de la curva de Gauss lo mínimo que permite la aritmética, como una moneda honesta. Si es cierta, cientos de resultados se vuelven teoremas y, probablemente, aparece una estructura (quizá un sistema cuántico) que explica por qué los primos son como son.</div>
+<details class="razon"><summary>La misma conclusión, en fórmulas</summary>
+<ol>
+<li><b>Escalera = curva lisa + ondas</b> (fórmula explícita, sección 9):<div class="eqn">ψ(x) = x − Σ<sub>ρ</sub> x<sup>ρ</sup>/ρ − ln 2π − ½·ln(1 − x<sup>−2</sup>),   y en primos: π(x) ≈ Li(x) − Σ<sub>ρ</sub> Li(x<sup>ρ</sup>) + …</div></li>
+<li><b>Dónde y cuánto.</b> Con ρ = σ + it, la onda es x<sup>ρ</sup> = x<sup>σ</sup>·e<sup>i·t·ln x</sup>. La t decide la frecuencia (cos(t·ln x)) y la σ el tamaño (x<sup>σ</sup>).</li>
+<li><b>El error lo manda el peor cero.</b> Si Θ = sup{σ : ζ(σ + it) = 0, 0 &lt; σ &lt; 1}, entonces:<div class="eqn">ψ(x) − x = O(x<sup>Θ</sup>·(ln x)²)   y, al revés, no es O(x<sup>Θ−ε</sup>) para ningún ε &gt; 0</div></li>
+<li><b>Lo que obliga la simetría y lo demostrado.</b> ξ(s) = ξ(1 − s) y ζ(s̄) = ζ(s)‾ dan ceros simétricos respecto de σ = ½, así que ½ ≤ Θ ≤ 1. Que no haya ceros en σ = 1 (Hadamard y de la Vallée Poussin, 1896) da el teorema de los números primos, π(x) ~ x/ln x, pero no baja Θ de 1. La prueba presentada en 2026, aún en revisión, daría Θ ≤ 7/8.</li>
+<li><b>La hipótesis:</b><div class="eqn">Θ = ½   ⇔   π(x) = Li(x) + O(√x · ln x)</div></li>
+<li><b>«Como una moneda honesta».</b> Tras N lanzamientos de una moneda, (caras − cruces) se aleja de 0 del orden de √N. Si cada n fuera primo «al azar» con probabilidad 1/ln n (modelo de Cramér), la cuenta se apartaría de Li(x) del orden de √x, con el mismo exponente ½. La hipótesis dice que los primos, que no son aleatorios, no se desvían más que eso.</li>
+<li><b>«Quizá un sistema cuántico»</b> (Hilbert y Pólya). Si existiera un operador autoadjunto H cuyos valores propios fueran las alturas γ de los ceros, ρ = ½ + iγ, esas γ serían números reales, como toda energía cuántica. Entonces todos los ceros tendrían parte real ½. La estadística de las distancias entre ceros, que coincide con la de las matrices aleatorias GUE (Montgomery, 1973; Odlyzko, 1987), es la mejor pista de que ese operador existe (sección 12).</li>
+</ol>
+</details>
+</section>
+
+
+<section id="resumen">
+<span class="num">Sección 14</span>
+<h2>Todo junto: la cadena completa en una página</h2>
+<p>Cada paso de esta lista es una sección de la página. Léela de arriba abajo y tendrás el problema entero; cada frase en negrita es lo que ese paso aporta a la conclusión.</p>
+<ol class="steps">
+<li><b class="t">1. Los primos se cuentan con una escalera</b><span class="eq">π(x) = número de primos ≤ x</span><div class="why">Sube un escalón en cada primo, con anchos irregulares. <b>Es lo que queremos describir.</b></div></li>
+<li><b class="t">2. Gauss la aproxima acumulando una densidad</b><span class="eq">Li(x) = ∫₂ˣ dt / ln t</span><div class="why">Cerca de t, 1 de cada ln t números es primo; el área bajo esa densidad es la curva lisa. Se equivoca poco: en 10⁶, unos 130 de 78.498. <b>La pregunta pasa a ser: ¿cuánto se equivoca, exactamente?</b></div></li>
+<li><b class="t">3. La zeta está fabricada con los primos</b><span class="eq">ζ(s) = Σ 1/nˢ = Π 1/(1 − p⁻ˢ)</span><div class="why">Una serie de Dirichlet que, por la factorización única, es un producto sobre los primos. <b>Todo lo que diga la zeta habla de los primos.</b> Pero la suma solo funciona para s &gt; 1.</div></li>
+<li><b class="t">4. Hay que ir al plano complejo</b><span class="eq">x<sup>σ+it</sup> = x<sup>σ</sup> · (cos(t·ln x) + i·sin(t·ln x))</span><div class="why">Con s = σ + it cada término es una flecha: σ da el tamaño, t el giro. Los giros hacen que los términos se cancelen y producen <b>oscilaciones, que es lo único que puede dibujar saltos</b>. Una variable real no gira.</div></li>
+<li><b class="t">5. La continuación analítica cruza el muro</b><span class="eq">ζ(s) = η(s) / (1 − 2¹⁻ˢ),  η(s) = 1 − 1/2ˢ + 1/3ˢ − …</span><div class="why">La serie alterna converge para σ &gt; 0 y define la misma función en la franja 0 &lt; σ &lt; 1. <b>Ahí es donde viven los ceros que importan.</b></div></li>
+<li><b class="t">6. Los ceros: dónde la zeta vale 0</b><span class="eq">ρ = ½ + 14,13i, ½ + 21,02i, ½ + 25,01i, …</span><div class="why">Infinitos, a alturas irregulares, todos con σ = ½ hasta donde se ha mirado (más de 10¹³). Forman su propia escalera, casi perfectamente regular, y se repelen como niveles de energía atómicos. <b>Son las «notas» de los primos.</b></div></li>
+<li><b class="t">7. La fórmula explícita: escalera = curva lisa + una onda por cero</b><span class="eq">ψ(x) = x − Σ<sub>ρ</sub> x<sup>ρ</sup>/ρ − ln 2π − ½ ln(1 − x⁻²)</span><div class="why">Cada cero ρ = σ + it aporta la onda x<sup>ρ</sup>/ρ: <b>t decide dónde ondula (coloca los saltos), σ decide cuánto crece (x<sup>σ</sup>)</b>. Sumadas todas, reproducen la escalera exacta, escalón a escalón.</div></li>
+<li><b class="t">8. Por tanto, el error de Gauss lo manda el peor σ</b><span class="eq">|Li(x) − π(x)| ≈ x<sup>Θ</sup> · ln x,  Θ = mayor σ de todos los ceros</span><div class="why">El ln x viene de que hay ~x·ln x ceros que sumar. Lo demostrado: no hay ceros con σ ≥ 1 ni σ ≤ 0, y vienen en cuartetos espejo respecto a ½. <b>Luego ½ ≤ Θ &lt; 1; la prueba de 2026, aún en revisión, lo bajaría a Θ ≤ 7/8.</b></div></li>
+<li><b class="t">9. La hipótesis de Riemann</b><span class="eq">todos los ceros tienen σ = ½  ⇔  Θ = ½  ⇔  |Li(x) − π(x)| ≤ C·√x·ln x</span><div class="why">Tres frases, una sola afirmación. Dice que todas las ondas tienen el volumen mínimo que permite la simetría, y que <b>los primos se desvían de la curva de Gauss lo mismo que una moneda honesta, nunca más</b>.</div></li>
+<li><b class="t">10. Por qué importa</b><span class="eq">1859 → Hilbert 1900 → Clay 2000 → cuasi-RH 2026 (en revisión) → ¿?</span><div class="why">Convertiría cientos de teoremas condicionales en firmes, daría garantías sobre los huecos entre primos y, casi seguro, revelaría la estructura (quizá un sistema cuántico) que explica por qué los primos son como son. <b>No descubre primos nuevos: explica el orden que esconden.</b></div></li>
+</ol>
+<svg class="map" viewBox="0 0 760 250" role="img" aria-label="Resumen: la escalera de los primos es igual a la curva de Gauss más la suma de una onda por cada cero; la hipótesis fija el volumen de todas las ondas en raíz de x">
+<rect x="20" y="30" width="200" height="90" rx="12" fill="#e6f1fb" stroke="#378add"/><text x="120" y="62" text-anchor="middle" font-size="16" font-weight="600" fill="#0c447c">Escalera π(x)</text><text x="120" y="86" text-anchor="middle" font-size="13" fill="#185fa5">los primos, exactos</text><text x="120" y="106" text-anchor="middle" font-size="13" fill="#185fa5">a saltos irregulares</text>
+<text x="245" y="82" text-anchor="middle" font-size="26" fill="#898781">=</text>
+<rect x="270" y="30" width="200" height="90" rx="12" fill="#faece7" stroke="#d85a30"/><text x="370" y="62" text-anchor="middle" font-size="16" font-weight="600" fill="#4a1b0c">Curva de Gauss Li(x)</text><text x="370" y="86" text-anchor="middle" font-size="13" fill="#993c1d">la tendencia lisa</text><text x="370" y="106" text-anchor="middle" font-size="13" fill="#993c1d">densidad 1/ln t acumulada</text>
+<text x="495" y="82" text-anchor="middle" font-size="26" fill="#898781">+</text>
+<rect x="520" y="30" width="220" height="90" rx="12" fill="#eeedfe" stroke="#7f77dd"/><text x="630" y="58" text-anchor="middle" font-size="16" font-weight="600" fill="#26215c">Σ una onda por cero</text><text x="630" y="80" text-anchor="middle" font-size="13" fill="#534ab7">ρ = σ + it</text><text x="630" y="98" text-anchor="middle" font-size="13" fill="#534ab7">t: dónde ondula · σ: cuánto crece</text><text x="630" y="114" text-anchor="middle" font-size="12" fill="#534ab7">amplitud ≈ x^σ</text>
+<path d="M630 120 L630 150" stroke="#898781" stroke-width="1.5" fill="none" marker-end="url(#ar)"/>
+<rect x="145" y="155" width="470" height="70" rx="12" fill="#e1f5ee" stroke="#1d9e75"/><text x="380" y="182" text-anchor="middle" font-size="16" font-weight="600" fill="#04342c">Hipótesis de Riemann: todos los σ = ½</text><text x="380" y="205" text-anchor="middle" font-size="13" fill="#0f6e56">⇒ todas las ondas crecen como √x ⇒ |Li(x) − π(x)| ≤ C·√x·ln x: el error mínimo posible</text>
+</svg>
+<div class="note"><b>Si solo te quedas con una imagen,</b> que sea esta: la escalera de los primos es una curva lisa más un acorde de infinitas notas. La altura de cada nota (t) ya la conocemos, es la que es. Lo que Riemann conjeturó es que todas suenan al mismo volumen, el más bajo posible (σ = ½). Demostrarlo es lo que falta.</div>
+</section>
+
+<section id="glosario">
+<span class="num">Referencia</span>
+<h2>Glosario</h2>
+<dl>
+<dt>π(x)</dt><dd>Número de primos menores o iguales que x. La «escalera».</dd>
+<dt>Li(x), x/ln x</dt><dd>Las aproximaciones lisas de Gauss a π(x). Li es la buena.</dd>
+<dt>Serie de Dirichlet</dt><dd>Suma de la forma Σ aₙ/nˢ. La zeta es la que tiene todos los aₙ = 1.</dd>
+<dt>Producto de Euler</dt><dd>La misma zeta escrita como producto sobre los primos. Es el puente entre primos y función.</dd>
+<dt>s = σ + it</dt><dd>Variable compleja. σ controla tamaños (x<sup>σ</sup>), t controla giros y oscilaciones (cos t·ln x).</dd>
+<dt>Continuación analítica</dt><dd>Extender una función más allá de donde su fórmula original converge, de la única manera que mantiene la suavidad.</dd>
+<dt>Franja crítica, recta crítica</dt><dd>La zona 0 &lt; σ &lt; 1 donde viven los ceros interesantes; la recta σ = ½ donde todos los conocidos están.</dd>
+<dt>Θ (theta)</dt><dd>El mayor σ entre todos los ceros. El error de Gauss crece como x^Θ · ln x. La hipótesis dice Θ = ½.</dd>
+<dt>ψ(x)</dt><dd>Cuenta ponderada de primos (escalones de altura ln p). Hace exacta la fórmula explícita.</dd>
+<dt>Fórmula explícita</dt><dd>ψ(x) = parte lisa − suma de una onda por cero. Convierte ceros en primos.</dd>
+<dt>Cuasi-hipótesis de Riemann</dt><dd>Versión débil: los ceros están en una franja más estrecha que 0–1, aunque no necesariamente en ½.</dd>
+</dl>
+</section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.27.0/plotly.min.js"></script>
+<script>
+(function(){
+const dark=matchMedia('(prefers-color-scheme: dark)').matches;
+const C={blue:dark?'#3987e5':'#2a78d6',orange:dark?'#d95926':'#eb6834',teal:dark?'#199e70':'#1baf7a',red:dark?'#e66767':'#d03b3b',gray:'#898781',grid:dark?'#2c2c2a':'#e1e0d9',tick:'#898781',ring:dark?'#1e1e1d':'#ffffff'};
+Chart.defaults.font.family='system-ui,-apple-system,"Segoe UI",Roboto,sans-serif';Chart.defaults.color=C.tick;
+const es=(v,d)=>v.toLocaleString('es-ES',{minimumFractionDigits:d??0,maximumFractionDigits:d??0});
+const $=id=>document.getElementById(id);
+const ln=x=>Math.log(x);
+
+/* ---------- tooltip system ---------- */
+const tipEl=$('tip');let tipTarget=null;
+function showTip(el){const h=el.dataset.tip;if(!h){hideTip();return;}tipTarget=el;tipEl.innerHTML=h;tipEl.classList.add('on');const r=el.getBoundingClientRect();const tw=tipEl.offsetWidth,th=tipEl.offsetHeight;let x=r.left+r.width/2-tw/2,y=r.bottom+8;if(y+th>innerHeight-8)y=r.top-th-8;x=Math.max(8,Math.min(innerWidth-tw-8,x));tipEl.style.left=x+'px';tipEl.style.top=y+'px';}
+function hideTip(){tipTarget=null;tipEl.classList.remove('on');}
+document.addEventListener('mouseover',e=>{const el=e.target.closest('[data-tip]');if(el)showTip(el);});
+document.addEventListener('mouseout',e=>{const el=e.target.closest('[data-tip]');if(el&&!el.contains(e.relatedTarget))hideTip();});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-tip]');if(el){if(tipTarget===el)hideTip();else showTip(el);}else hideTip();});
+document.addEventListener('scroll',hideTip,{passive:true});
+function setv(id,text,tip){const el=$(id);el.textContent=text;if(tip!==undefined)el.dataset.tip=tip;if(tipTarget===el)showTip(el);}
+const F=s=>'<span class="f">'+s+'</span>';const R=s=>'<span class="r">'+s+'</span>';
+
+/* ---------- Chart.js shared tooltip style ---------- */
+const TT=(cb)=>({enabled:true,displayColors:false,backgroundColor:dark?'#f0efec':'#1a1a18',titleColor:dark?'#1a1a18':'#f0efec',bodyColor:dark?'#1a1a18':'#f0efec',padding:10,callbacks:cb});
+const base=(extra,tt)=>Object.assign({responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'nearest',axis:'x',intersect:false},plugins:{legend:{display:false},tooltip:tt||{enabled:false}}},extra||{});
+const ax=(o)=>Object.assign({type:'linear',ticks:{color:C.tick},grid:{color:C.grid}},o||{});
+
+/* ---------- primes up to 1e6 ---------- */
+const M=1000000;const sv=new Uint8Array(M+1);sv[0]=sv[1]=1;
+for(let i=2;i*i<=M;i++)if(!sv[i])for(let j=i*i;j<=M;j+=i)sv[j]=1;
+const PI=new Int32Array(M+1);for(let n=1;n<=M;n++)PI[n]=PI[n-1]+(sv[n]?0:1);
+const LI=new Float64Array(M+1);LI[2]=1.0451637801;for(let n=3;n<=M;n++)LI[n]=LI[n-1]+0.5*(1/ln(n-1)+1/ln(n));
+const isP=n=>n>=2&&!sv[n];
+
+/* ---------- zeta via Borwein (sigma>0) ---------- */
+const NB=220;const DB=[1];{let tm=1;for(let i=1;i<=NB;i++){tm*=4*(NB+i-1)*(NB-i+1)/((2*i)*(2*i-1));DB[i]=DB[i-1]+tm;}}
+function eta(sig,t){let er=0,ei=0;for(let k=0;k<NB;k++){const c=(k%2?-1:1)*(DB[k]-DB[NB]);const l=ln(k+1);const m=Math.exp(-sig*l);er+=c*m*Math.cos(t*l);ei-=c*m*Math.sin(t*l);}return[-er/DB[NB],-ei/DB[NB]];}
+function zeta(sig,t){const[er,ei]=eta(sig,t);const A=Math.pow(2,1-sig),l2=ln(2);const dr=1-A*Math.cos(t*l2),di=A*Math.sin(t*l2);const dd=dr*dr+di*di;if(dd<1e-14)return[Infinity,0];return[(er*dr+ei*di)/dd,(ei*dr-er*di)/dd];}
+const zabs=(s,t)=>{const z=zeta(s,t);return Math.hypot(z[0],z[1]);};
+const ZEROS=[14.134725,21.02204,25.010858,30.424876,32.935062,37.586178,40.918719,43.327073,48.005151,49.773832,52.970321,56.446248,59.347044,60.831779,65.112544,67.079811,69.546402,72.067158,75.704691,77.14484,79.337375,82.910381,84.735493,87.425275,88.809111,92.491899,94.651344,95.870634,98.831194,101.317851,103.725538,105.446623,107.168611,111.029536,111.874659,114.320221,116.226680,118.790783,121.370125,122.946829,124.256819,127.516684,129.578704,131.087688,133.497737,134.756510,138.116042,139.736209,141.123707,143.111846];
+
+/* ---------- 1. builder ---------- */
+{const MAX=40;const chips=$('chips');const cs=[];for(let n=1;n<=MAX;n++){const s=document.createElement('span');s.className='chip';s.textContent=n;chips.appendChild(s);cs.push(s);}
+let n=0,c=0;const pts=[{x:0,y:0}];const found=[];
+const ch=new Chart($('cBuild'),{type:'line',data:{datasets:[{data:pts,stepped:'before',borderColor:C.blue,borderWidth:2,pointRadius:0}]},options:base({scales:{x:ax({min:0,max:MAX,grid:{display:false},title:{display:true,text:'número',color:C.tick}}),y:ax({min:0,max:13,ticks:{stepSize:2,color:C.tick},title:{display:true,text:'primos contados',color:C.tick}})}},TT({title:i=>'x = '+i[0].parsed.x,label:i=>'π('+i.parsed.x+') = '+i.parsed.y+' primos'}))});
+function divisor(k){for(let d=2;d*d<=k;d++)if(k%d===0)return d;return 0;}
+function step(){if(n>=MAX)return;n++;const p=isP(n);if(p){c++;found.push(n);}pts.push({x:n,y:c});cs[n-1].className='chip '+(p?'p':'n');
+const d=divisor(n);setv('b-n',n,n===1?'<b>1</b> no se considera primo por definición.':p?'<b>'+n+' es primo</b>: ningún número entre 2 y '+Math.floor(Math.sqrt(n))+' lo divide.'+R('Basta probar divisores hasta √'+n+' ≈ '+es(Math.sqrt(n),2)):'<b>'+n+' no es primo</b>: '+n+' = '+d+' × '+(n/d)+'.');
+setv('b-c',c,'<b>π('+n+') = '+c+'</b>'+F('primos hasta '+n+': '+(found.join(', ')||'ninguno')));
+$('b-msg').textContent=n===1?'El 1 no es primo: la línea sigue plana en 0.':p?n+' es primo: la cuenta sube a '+c+' y la escalera da un salto.':n+' no es primo: la cuenta se queda en '+c+'.';
+if(n===MAX)$('b-msg').textContent='Hasta el 40 hay 12 primos. Fíjate en el tramo plano entre 23 y 29, y entre 31 y 37.';ch.update();}
+$('b-next').onclick=step;$('b-all').onclick=()=>{while(n<MAX)step();};
+$('b-reset').onclick=()=>{n=0;c=0;pts.length=1;found.length=0;cs.forEach(s=>s.className='chip');setv('b-n',0,'');setv('b-c',0,'');$('b-msg').textContent='Pulsa «Siguiente» para empezar.';ch.update();};}
+
+
+/* ---------- 2a. Li as accumulated density ---------- */
+{const curve=[];for(let t=2;t<=200;t+=0.5)curve.push({x:t,y:1/ln(t)});const P=[];for(let n=2;n<=200;n++)if(isP(n))P.push(n);
+const ch=new Chart($('cLi'),{data:{datasets:[{type:'line',data:[],borderColor:'transparent',backgroundColor:C.orange+'44',fill:'origin',pointRadius:0},{type:'line',data:curve,borderColor:C.orange,borderWidth:2,pointRadius:0},{type:'scatter',data:P.map(p=>({x:p,y:1})),pointRadius:3,pointBackgroundColor:C.blue,pointBorderWidth:0}]},options:base({scales:{x:ax({min:0,max:200,grid:{display:false},title:{display:true,text:'t',color:C.tick}}),y:ax({min:0,max:1.5,title:{display:true,text:'primos por unidad',color:C.tick}})}},TT({title:i=>'t = '+es(i[0].parsed.x,1),label:()=>'',afterBody:i=>{const t=i[0].parsed.x;return['densidad: 1 / ln '+es(t,1)+' = 1 / '+es(ln(t),3)+' = '+es(1/ln(t),3),'≈ '+es(10/ln(t),1)+' primos esperados por decena','área hasta aquí: Li('+es(t,0)+') ≈ '+es(LI[Math.max(2,Math.round(t))],1)];}}))});
+const inp=$('l-x');
+function draw(){const X=+inp.value;$('l-xo').textContent=X;ch.data.datasets[0].data=curve.filter(p=>p.x<=X);ch.update();
+const loc=P.filter(p=>p>X-10&&p<=X).length;
+setv('l-li',es(LI[X],1),'<b>Área bajo 1/ln t entre 2 y '+X+'</b>'+F('≈ 1/ln 2 + 1/ln 3 + … + 1/ln '+X)+F('= '+es(1/ln(2),3)+' + '+es(1/ln(3),3)+' + … + '+es(1/ln(X),3)+' ≈ '+es(LI[X],2))+R('Suma de '+(X-1)+' columnas de anchura 1 (calculada con el método del trapecio).'));
+setv('l-pi',es(PI[X]),'<b>Cuenta exacta</b>'+F('π('+X+') = '+PI[X])+R('Li − π = '+es(LI[X]-PI[X],1)+': la curva lisa va '+(LI[X]>PI[X]?'por encima':'por debajo')+'.'));
+$('l-dl').textContent='Densidad en t = '+X;setv('l-dv',es(1/ln(X),3),'<b>Idea de Gauss</b>'+F('1 / ln '+X+' = 1 / '+es(ln(X),4)+' = '+es(1/ln(X),4))+R('En promedio, 1 de cada '+es(ln(X),1)+' números cerca de '+X+' es primo.'));
+setv('l-loc',loc+' (esperados '+es(10/ln(X),1)+')','<b>Entre '+(X-10)+' y '+X+'</b>'+F('reales: '+(P.filter(p=>p>X-10&&p<=X).join(', ')||'ninguno'))+F('esperados: 10 × 1/ln '+X+' = '+es(10/ln(X),2))+R('La densidad es un promedio: unas decenas tienen más y otras menos.'));}
+inp.addEventListener('input',draw);draw();}
+/* ---------- 2. Gauss ---------- */
+{const gTip=x=>{const l=ln(x);return[{title:'x = '+es(x)},'π(x) = '+es(PI[x])+' primos (cuenta exacta)','Li(x) = ∫₂ˣ dt/ln t ≈ '+es(LI[x],1),'x/ln x: ln '+es(x)+' = '+es(l,4)+' → '+es(x)+' / '+es(l,4)+' = '+es(x/l,1),'Error de Li: '+es(LI[x],1)+' − '+es(PI[x])+' = '+es(LI[x]-PI[x],1)];};
+const ch=new Chart($('cGauss'),{type:'line',data:{datasets:[{data:[],stepped:'before',borderColor:C.blue,borderWidth:2,pointRadius:0},{data:[],borderColor:C.orange,borderWidth:2,borderDash:[6,4],pointRadius:0},{data:[],borderColor:C.gray,borderWidth:1.5,borderDash:[2,3],pointRadius:0}]},options:base({scales:{x:ax({min:0,grid:{display:false},ticks:{color:C.tick,maxTicksLimit:5,callback:v=>es(v)}}),y:ax({min:0,ticks:{color:C.tick,maxTicksLimit:6,callback:v=>es(v)}})}},TT({title:i=>gTip(i[0].parsed.x)[0].title,label:()=>'',afterBody:i=>gTip(i[0].parsed.x).slice(1)}))});
+const inp=$('g-x');
+function draw(){const X=Math.max(10,Math.round(Math.pow(10,+inp.value)));$('g-xo').textContent=es(X);const K=Math.min(500,X);const a=[],b=[],c=[];
+for(let i=0;i<=K;i++){const x=Math.max(2,Math.floor(2+(X-2)*i/K));a.push({x,y:PI[x]});b.push({x,y:LI[x]});c.push({x,y:x/ln(x)});}
+ch.data.datasets[0].data=a;ch.data.datasets[1].data=b;ch.data.datasets[2].data=c;ch.options.scales.x.max=X;ch.update();
+const l=ln(X),sq=Math.sqrt(X),err=LI[X]-PI[X];
+setv('g-pi',es(PI[X]),'<b>Cuenta exacta.</b> Se criban todos los números hasta '+es(X)+' y se cuentan los que no tienen divisores.'+F('π('+es(X)+') = '+es(PI[X])));
+setv('g-li',es(LI[X]),'<b>Integral logarítmica.</b> Área bajo 1/ln t desde 2 hasta x, calculada sumando paso a paso.'+F('Li('+es(X)+') = ∫₂^'+es(X)+' dt / ln t ≈ '+es(LI[X],2))+R('Idea de Gauss: cerca de t, 1 de cada ln t números es primo; sumar 1/ln t cuenta los primos esperados.'));
+setv('g-xl',es(X/l),'<b>Aproximación sencilla.</b>'+F('ln('+es(X)+') = '+es(l,4))+F(es(X)+' / '+es(l,4)+' = '+es(X/l,2))+R('Peor que Li porque usa la densidad 1/ln x de un solo golpe, en vez de acumularla.'));
+setv('g-err',es(err),'<b>Error = Li(x) − π(x)</b>'+F(es(LI[X],2)+' − '+es(PI[X])+' = '+es(err,2))+R(err>0?'Li va por encima de la escalera (casi siempre ocurre hasta números astronómicos).':'Li va por debajo.'));
+setv('g-sq',es(sq*l),'<b>Cota de von Koch.</b> Si la hipótesis de Riemann es cierta, |Li − π| nunca supera (una constante por) √x · ln x.'+F('√'+es(X)+' = '+es(sq,2))+F('ln '+es(X)+' = '+es(l,4))+F(es(sq,2)+' × '+es(l,4)+' = '+es(sq*l,2)));
+setv('g-rel',es(100*err/PI[X],2)+' %','<b>Error relativo.</b>'+F('('+es(LI[X],1)+' − '+es(PI[X])+') / '+es(PI[X])+' × 100 = '+es(100*err/PI[X],3)+' %'));}
+inp.addEventListener('input',draw);draw();
+const xs=[],e=[],b=[];for(let k=1;k<=6;k+=0.05){const x=Math.round(Math.pow(10,k));if(x<10||x>M)continue;xs.push(x);e.push({x,y:Math.max(0.5,Math.abs(LI[x]-PI[x]))});b.push({x,y:Math.sqrt(x)*ln(x)});}
+new Chart($('cErr'),{type:'line',data:{datasets:[{data:e,borderColor:C.orange,borderWidth:2,pointRadius:0},{data:b,borderColor:C.gray,borderWidth:1.5,borderDash:[6,4],pointRadius:0}]},options:base({scales:{x:ax({type:'logarithmic',min:10,max:M,grid:{display:false},ticks:{color:C.tick,callback:v=>[10,100,1000,10000,100000,1000000].includes(v)?es(v):''}}),y:ax({type:'logarithmic',min:0.5,max:20000,ticks:{color:C.tick,callback:v=>[1,10,100,1000,10000].includes(v)?es(v):''}})}},TT({title:i=>'x = '+es(i[0].parsed.x),label:()=>'',afterBody:i=>{const x=i[0].parsed.x;return['|Li − π| = |'+es(LI[x],1)+' − '+es(PI[x])+'| = '+es(Math.abs(LI[x]-PI[x]),1),'√x · ln x = '+es(Math.sqrt(x),1)+' × '+es(ln(x),3)+' = '+es(Math.sqrt(x)*ln(x),1)];}}))});
+/* von Koch card */
+const kc=new Chart($('cKoch'),{type:'line',data:{datasets:[{data:e,borderColor:C.orange,borderWidth:2,pointRadius:0},{data:b,borderColor:C.gray,borderWidth:1.5,borderDash:[6,4],pointRadius:0},{data:[],borderColor:C.red,borderWidth:2,borderDash:[6,4],pointRadius:0}]},options:base({scales:{x:ax({type:'logarithmic',min:10,max:M,grid:{display:false},ticks:{color:C.tick,callback:v=>[10,100,1000,10000,100000,1000000].includes(v)?es(v):''}}),y:ax({type:'logarithmic',min:0.5,max:1e6,ticks:{color:C.tick,callback:v=>[1,10,100,1000,10000,100000,1000000].includes(v)?es(v):''}})}},TT({title:i=>'x = '+es(i[0].parsed.x),label:()=>'',afterBody:i=>{const x=i[0].parsed.x,s=+$('k-s').value;return['error real = '+es(Math.abs(LI[x]-PI[x]),1),'√x · ln x = '+es(Math.sqrt(x)*ln(x),1),'x^'+es(s,2)+' · ln x = '+es(Math.pow(x,s),1)+' × '+es(ln(x),3)+' = '+es(Math.pow(x,s)*ln(x),1)];}}))});
+const ks=$('k-s');
+function drawK(){const s=+ks.value;$('k-so').textContent=es(s,2);$('k-lab').textContent='Cota con Θ = '+es(s,2)+' en 10⁶';
+kc.data.datasets[2].data=xs.map(x=>({x,y:Math.pow(x,s)*ln(x)}));kc.update();
+const X=1e6,l=ln(X);const real=Math.abs(LI[X]-PI[X]);
+setv('k-real',es(real),'<b>Error medido</b>'+F('|Li(10⁶) − π(10⁶)| = |'+es(LI[X],1)+' − '+es(PI[X])+'| = '+es(real,1)));
+setv('k-rh',es(Math.sqrt(X)*l),'<b>Si todos los ceros están en ½</b>'+F('√10⁶ · ln 10⁶ = 1.000 × '+es(l,3)+' = '+es(Math.sqrt(X)*l,1))+R('El error real ('+es(real)+') queda muy por debajo: coherente con la hipótesis.'));
+setv('k-hyp',es(Math.pow(X,s)*l),'<b>Si existiera un cero con σ = '+es(s,2)+'</b>'+F('(10⁶)^'+es(s,2)+' = 10^'+es(6*s,2)+' = '+es(Math.pow(X,s),0))+F(es(Math.pow(X,s),0)+' × ln 10⁶ = '+es(Math.pow(X,s)*l,0))+R(s>0.5?'La onda de ese cero, por sí sola, acabaría dominando el error.':'Es la cota de la hipótesis.'));
+const Y=1e12;setv('k-big',es(Math.pow(Y,s)*ln(Y)),'<b>La misma cota en un billón</b>'+F('(10¹²)^'+es(s,2)+' × ln 10¹² = 10^'+es(12*s,2)+' × '+es(ln(Y),2)+' = '+es(Math.pow(Y,s)*ln(Y),0))+R('Con Θ = ½ sale ≈ 27,6 millones frente a 37.607 millones de primos: un 0,07 %. Con Θ = 0,8 saldría ≈ 1,7 billones: más que todos los primos que hay. Por eso Θ > ½ es incompatible con lo que se observa.'));
+$('k-msg').textContent=s===0.5?'Con Θ = ½ la cota gris y la roja coinciden: es la cota de la hipótesis de Riemann, y el error real se mantiene por debajo en todo el rango.':'La cota roja se separa de la gris y se dispara. Si existiera un cero con σ = '+es(s,2)+', la fórmula explícita obliga a que el error de Gauss acabe creciendo así. Los datos no muestran nada parecido: por eso cada cero comprobado en ½ es una confirmación más, aunque no una demostración.';}
+ks.addEventListener('input',drawK);drawK();}
+
+/* ---------- 3. Dirichlet ---------- */
+{let alt=false;
+const ch=new Chart($('cDir'),{data:{datasets:[{type:'bar',data:[],backgroundColor:C.blue,borderRadius:3},{type:'line',data:[],borderColor:C.orange,borderWidth:2,pointRadius:0}]},options:base({scales:{x:ax({type:'linear',min:0.5,max:60.5,grid:{display:false},title:{display:true,text:'n',color:C.tick}}),y:ax({})}},TT({title:i=>'n = '+i[0].parsed.x,label:()=>'',afterBody:i=>{const n=i[0].parsed.x,s=+$('d-s').value;const sg=alt&&n%2===0?'−':'';return['término: '+sg+'1/'+n+'^'+es(s,2)+' = '+sg+'1/'+es(Math.pow(n,s),4)+' = '+es((sg?-1:1)/Math.pow(n,s),5),'suma hasta n: '+es(i.find(d=>d.datasetIndex===1)?.parsed.y??0,5)];}}))});
+const si=$('d-s'),ni=$('d-n');
+function draw(){const s=+si.value,N=+ni.value;$('d-so').textContent=es(s,2);$('d-no').textContent=N;
+const terms=[],sums=[];let acc=0;const first=[];for(let n=1;n<=N;n++){const t=(alt&&n%2===0?-1:1)/Math.pow(n,s);acc+=t;terms.push({x:n,y:t});sums.push({x:n,y:acc});if(n<=4)first.push((t<0?'− ':n>1?'+ ':'')+es(Math.abs(t),4));}
+let prod=1,cnt=0;const pf=[];for(let p=2;cnt<N;p++){if(!isP(p))continue;cnt++;const f=1/(1-Math.pow(p,-s));prod*=f;if(cnt<=3)pf.push('1/(1−'+p+'^−'+es(s,2)+') = '+es(f,4));}
+ch.data.datasets[0].data=terms;ch.data.datasets[1].data=sums;ch.options.scales.x.max=N+0.5;
+const lim=alt?eta(s,0)[0]:(s>1?zeta(s,0)[0]:NaN);
+ch.options.scales.y.min=alt?-0.6:0;ch.options.scales.y.max=alt?1.2:(s>1?Math.min(8,Math.max(2,lim*1.15)):Math.max(2,acc*1.1));ch.update();
+setv('d-sum',es(acc,4),'<b>Suma de los '+N+' primeros términos</b>'+F(first.join(' ')+(N>4?' + … ':'')+' = '+es(acc,4))+R('Cada término es '+(alt?'±':'')+'1/n^'+es(s,2)+'. El último: 1/'+N+'^'+es(s,2)+' = '+es(1/Math.pow(N,s),5)));
+setv('d-prod',alt?'—':es(prod,4),alt?'La serie alterna no tiene producto de Euler directo.':'<b>Producto sobre los '+N+' primeros primos</b>'+F(pf.join(' · ')+(N>3?' · …':''))+F('= '+es(prod,4))+R('Cada factor 1/(1−p^−s) = 1 + p^−s + p^−2s + … aporta todas las potencias de ese primo; al multiplicar aparecen todos los números, cada uno una vez.'));
+setv('d-lim',isNaN(lim)?'∞ (no converge)':es(lim,4),isNaN(lim)?'<b>Con s ≤ 1 la suma crece sin límite.</b>'+R('Los términos 1/n^s no se encogen lo bastante deprisa: la serie armónica (s = 1) ya diverge.'):'<b>Valor exacto '+(alt?'η':'ζ')+'('+es(s,2)+')</b>'+F(es(lim,6))+R(alt?'Calculado con la serie alterna acelerada.':s===2?'ζ(2) = π²/6: lo demostró Euler en 1735.':'Calculado por continuación analítica; la suma directa llega al mismo valor con infinitos términos.'));
+$('d-msg').textContent=alt?'Serie alterna η(s): como los signos cambian, los términos se compensan y la suma converge para todo s > 0. Aquí no hay producto de Euler directo.':s>1?'Con s = '+es(s,2)+' la suma y el producto de Euler van los dos hacia '+es(lim,4)+'. Mismo número por dos caminos: uno recorre todos los números, el otro solo los primos.':'Con s ≤ 1 la suma crece sin límite: no hay valor. Para dar sentido a ζ aquí hace falta la continuación analítica (sección 6).';}
+$('d-one').onclick=()=>{alt=false;$('d-one').classList.add('on');$('d-alt').classList.remove('on');draw();};
+$('d-alt').onclick=()=>{alt=true;$('d-alt').classList.add('on');$('d-one').classList.remove('on');draw();};
+si.addEventListener('input',draw);ni.addEventListener('input',draw);draw();}
+
+/* ---------- 4. wall ---------- */
+{const d=[];for(let s=1.02;s<=4;s+=0.02)d.push({x:+s.toFixed(2),y:Math.min(12,zeta(s,0)[0])});
+new Chart($('cWall'),{type:'line',data:{datasets:[{data:d,borderColor:C.blue,borderWidth:2,pointRadius:0}]},options:base({scales:{x:ax({min:0,max:4,grid:{display:false},title:{display:true,text:'s (real)',color:C.tick}}),y:ax({min:0,max:12,title:{display:true,text:'ζ(s)',color:C.tick}})}},TT({title:i=>'s = '+es(i[0].parsed.x,2),label:i=>'ζ(s) = '+es(zeta(i.parsed.x,0)[0],4),afterBody:i=>{const s=i[0].parsed.x;return['1 + 1/2^'+es(s,2)+' + 1/3^'+es(s,2)+' + … = 1 + '+es(Math.pow(2,-s),4)+' + '+es(Math.pow(3,-s),4)+' + …'];}}))});}
+
+/* ---------- 5. complex plane ---------- */
+{const cv=$('cPlane'),ctx=cv.getContext('2d');let alt=false;const si=$('p-sig'),ti=$('p-t'),ni=$('p-n');
+function draw(){const sig=+si.value,t=+ti.value,N=+ni.value;$('p-sigo').textContent=es(sig,2);$('p-to').textContent=es(t,2);$('p-no').textContent=N;
+const pts=[[0,0]];let re=0,im=0,lr=0,la=0,lx=0,ly=0;for(let n=1;n<=N;n++){const r=Math.pow(n,-sig);const sg=alt&&n%2===0?-1:1;const a=-t*ln(n);lx=sg*r*Math.cos(a);ly=sg*r*Math.sin(a);re+=lx;im+=ly;pts.push([re,im]);lr=r;la=a;}
+let z=alt?eta(sig,t):zeta(sig,t);const zf=isFinite(z[0])&&Math.hypot(z[0],z[1])<50;
+let xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);if(zf){xs=xs.concat([z[0]]);ys=ys.concat([z[1]]);}
+let minx=Math.min(0,...xs),maxx=Math.max(0,...xs),miny=Math.min(0,...ys),maxy=Math.max(0,...ys);
+const span=Math.max(maxx-minx,maxy-miny,0.8)*1.15;const cx=(minx+maxx)/2,cy=(miny+maxy)/2;
+const W=cv.width,H=cv.height;const sc=Math.min(W,H)/span;const X=x=>W/2+(x-cx)*sc,Y=y=>H/2-(y-cy)*sc;
+ctx.clearRect(0,0,W,H);ctx.lineWidth=1;ctx.strokeStyle=C.grid;ctx.font='12px system-ui';ctx.fillStyle=C.tick;
+const step=span>12?2:span>6?1:span>2.5?0.5:0.25;const fmt=v=>es(v,step<1?2:0);
+for(let g=Math.floor((cx-span/2)/step)*step;g<=cx+span/2;g+=step){const gx=X(g);if(gx<0||gx>W)continue;ctx.beginPath();ctx.moveTo(gx,0);ctx.lineTo(gx,H);ctx.stroke();if(Math.abs(g)>1e-9){ctx.textAlign='center';ctx.fillText(fmt(g),gx,Math.min(H-4,Math.max(14,Y(0)+14)));}}
+for(let g=Math.floor((cy-span/2)/step)*step;g<=cy+span/2;g+=step){const gy=Y(g);if(gy<0||gy>H)continue;ctx.beginPath();ctx.moveTo(0,gy);ctx.lineTo(W,gy);ctx.stroke();if(Math.abs(g)>1e-9){ctx.textAlign='right';ctx.fillText(fmt(g)+'i',Math.min(W-4,Math.max(30,X(0)-6)),gy+4);}}
+ctx.strokeStyle=C.gray;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(0,Y(0));ctx.lineTo(W,Y(0));ctx.moveTo(X(0),0);ctx.lineTo(X(0),H);ctx.stroke();
+ctx.fillStyle=C.tick;ctx.font='13px system-ui';ctx.textAlign='left';ctx.fillText('eje real',W-60,Y(0)-6);ctx.fillText('eje imaginario',X(0)+6,14);ctx.fillText('0',X(0)-12,Y(0)+16);
+const arrow=(x1,y1,x2,y2)=>{const a=Math.atan2(y2-y1,x2-x1);const L=Math.hypot(x2-x1,y2-y1);if(L<6)return;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-8*Math.cos(a-0.4),y2-8*Math.sin(a-0.4));ctx.moveTo(x2,y2);ctx.lineTo(x2-8*Math.cos(a+0.4),y2-8*Math.sin(a+0.4));ctx.stroke();};
+ctx.strokeStyle=C.blue;ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';
+for(let i=1;i<pts.length;i++){ctx.beginPath();ctx.moveTo(X(pts[i-1][0]),Y(pts[i-1][1]));ctx.lineTo(X(pts[i][0]),Y(pts[i][1]));ctx.stroke();arrow(X(pts[i-1][0]),Y(pts[i-1][1]),X(pts[i][0]),Y(pts[i][1]));}
+ctx.fillStyle=C.blue;for(let i=1;i<pts.length;i++){ctx.beginPath();ctx.arc(X(pts[i][0]),Y(pts[i][1]),2.2,0,7);ctx.fill();}
+const every=N<=12?1:N<=40?5:20;ctx.font='12px system-ui';ctx.fillStyle=C.blue;ctx.textAlign='left';
+for(let i=1;i<pts.length;i++){if(i%every!==0&&i!==1)continue;const mx=(X(pts[i-1][0])+X(pts[i][0]))/2,my=(Y(pts[i-1][1])+Y(pts[i][1]))/2;ctx.fillText('n='+i,mx+5,my-5);}
+ctx.fillStyle=C.orange;ctx.beginPath();ctx.arc(X(re),Y(im),6,0,7);ctx.fill();
+ctx.font='600 13px system-ui';ctx.fillStyle=C.orange;ctx.textAlign=X(re)>W-200?'right':'left';ctx.fillText('suma de '+N+' términos: '+es(re,3)+(im>=0?' + ':' − ')+es(Math.abs(im),3)+'i',X(re)+(X(re)>W-200?-10:10),Y(im)+22);
+if(zf){ctx.fillStyle=C.teal;ctx.beginPath();ctx.arc(X(z[0]),Y(z[1]),6,0,7);ctx.fill();ctx.strokeStyle=C.ring;ctx.lineWidth=2;ctx.stroke();ctx.fillStyle=C.teal;ctx.textAlign=X(z[0])>W-200?'right':'left';ctx.fillText((alt?'η':'ζ')+'('+es(sig,2)+(t?' + '+es(t,2)+'i':'')+') = '+es(z[0],3)+(z[1]>=0?' + ':' − ')+es(Math.abs(z[1]),3)+'i',X(z[0])+(X(z[0])>W-200?-10:10),Y(z[1])-12);}
+setv('p-re',es(re,4),'<b>Parte real de la suma</b> = Σ n^−σ · cos(−t·ln n), n = 1…'+N+F('último sumando: '+es(lr,4)+' × cos('+es(la,3)+') = '+es(lx,4)));
+setv('p-im',es(im,4),'<b>Parte imaginaria</b> = Σ n^−σ · sin(−t·ln n), n = 1…'+N+F('último sumando: '+es(lr,4)+' × sin('+es(la,3)+') = '+es(ly,4)));
+setv('p-len',es(lr,4),'<b>Longitud de la flecha n = '+N+'</b>'+F(N+'^−'+es(sig,2)+' = 1 / '+N+'^'+es(sig,2)+' = 1 / '+es(Math.pow(N,sig),3)+' = '+es(lr,5))+R('Solo depende de σ: más σ, flechas más cortas.'));
+setv('p-ang',es(la,3)+' rad','<b>Ángulo de la flecha n = '+N+'</b>'+F('−t · ln n = −'+es(t,2)+' × ln '+N+' = −'+es(t,2)+' × '+es(ln(N),4)+' = '+es(la,3)+' rad')+R('= '+es(la*180/Math.PI,0)+'°, es decir '+es(Math.abs(la)/(2*Math.PI),2)+' vueltas. Solo depende de t: más t, más giro.'));
+$('p-msg').textContent=t===0?(alt?'Sin giro pero con signos alternos: las flechas van y vienen y la cadena se cierra.':sig>1?'Sin giro (t = 0): todas las flechas apuntan a la derecha y la suma se acerca a ζ(σ) = '+es(z[0],4)+'.':'Sin giro y σ ≤ 1: las flechas no se encogen lo bastante y la cadena se va al infinito.'):(sig>1?'Las flechas giran y se encogen: la cadena se enrosca alrededor del punto verde, el valor de ζ(s).':alt?'Giro más signos alternos: aunque σ ≤ 1, la cadena se enrosca y converge. Es la serie η que permite cruzar el muro.':'σ ≤ 1 con giro: la cadena se enrosca pero no se cierra del todo; la suma directa no converge. El punto verde es el valor que le da la continuación analítica.');}
+$('p-one').onclick=()=>{alt=false;$('p-one').classList.add('on');$('p-alt').classList.remove('on');draw();};
+$('p-alt').onclick=()=>{alt=true;$('p-alt').classList.add('on');$('p-one').classList.remove('on');draw();};
+[si,ti,ni].forEach(e=>e.addEventListener('input',draw));draw();}
+
+
+/* ---------- 5b. three floors: size, oscillation, product ---------- */
+{const xs=[];for(let x=2;x<=400;x+=1)xs.push(x);
+const mk=(id,color,ymin,ymax,fill)=>new Chart($(id),{data:{datasets:[{type:'line',data:[],borderColor:color,borderWidth:2,pointRadius:0,fill:fill?{target:'origin',above:color+'22',below:color+'22'}:false},{type:'scatter',data:[],pointRadius:6,pointBackgroundColor:C.red,pointBorderColor:C.ring,pointBorderWidth:2}]},options:base({scales:{x:ax({min:2,max:400,grid:{display:false},ticks:{color:C.tick,maxTicksLimit:6}}),y:ax({min:ymin,max:ymax,ticks:{color:C.tick,maxTicksLimit:4}})}},TT({title:i=>'x = '+i[0].parsed.x,label:i=>i.datasetIndex===0?es(i.parsed.y,3):''}))});
+const c1=mk('cQ1',C.orange,0,null,false),c2=mk('cQ2',C.teal,-1.1,1.1,false),c3=mk('cQ3',C.blue,null,null,true);
+const si=$('q-s'),ti=$('q-t'),xi=$('q-x');
+function draw(){const s=+si.value,t=+ti.value,x0=+xi.value;$('q-so').textContent=es(s,2);$('q-to').textContent=es(t,2);$('q-xo').textContent=x0;
+const size=x=>Math.pow(x,s),osc=x=>Math.cos(t*ln(x)),prod=x=>size(x)*osc(x);
+c1.data.datasets[0].data=xs.map(x=>({x,y:size(x)}));c1.data.datasets[1].data=[{x:x0,y:size(x0)}];c1.options.scales.y.max=Math.pow(400,s)*1.1;c1.update();
+c2.data.datasets[0].data=xs.map(x=>({x,y:osc(x)}));c2.data.datasets[1].data=[{x:x0,y:osc(x0)}];c2.update();
+const A=Math.pow(400,s)*1.1;c3.data.datasets[0].data=xs.map(x=>({x,y:prod(x)}));c3.data.datasets[1].data=[{x:x0,y:prod(x0)}];c3.options.scales.y.min=-A;c3.options.scales.y.max=A;c3.update();
+const ang=t*ln(x0),cs=Math.cos(ang);
+setv('q-size',es(size(x0),3),'<b>Paso 1: potencia normal</b>'+F(x0+'^'+es(s,2)+' = '+es(size(x0),4))+R(s===0.5?'Con σ = ½ es la raíz cuadrada: √'+x0+'.':'Cuanto mayor σ, más deprisa crece con x.'));
+setv('q-ang',es(ang,2)+' rad','<b>Paso 2: el ángulo del giro</b>'+F('t · ln x = '+es(t,2)+' × ln '+x0+' = '+es(t,2)+' × '+es(ln(x0),4)+' = '+es(ang,3)+' rad')+R('Son '+es(ang/(2*Math.PI),2)+' vueltas completas. El ángulo crece con ln x, por eso la onda se va estirando hacia la derecha.'));
+setv('q-cos',es(cs,4),'<b>Coseno del ángulo</b>'+F('cos('+es(ang,3)+') = '+es(cs,5))+R('Siempre entre −1 y 1: la oscilación pura, sin tamaño.'));
+setv('q-val',es(size(x0)*cs,3),'<b>Producto</b>'+F(es(size(x0),4)+' × '+es(cs,5)+' = '+es(size(x0)*cs,4))+R('Es la parte real de x^ρ: lo que esta onda aporta (salvo dividir por ρ) a la corrección de la escalera en x = '+x0+'.'));
+$('q-msg').textContent='En x = '+x0+': tamaño '+es(size(x0),2)+' (piso 1) × oscilación '+es(cs,2)+' (piso 2) = '+es(size(x0)*cs,2)+' (piso 3). Mueve σ: solo cambia el piso 1 y la envolvente del 3. Mueve t: solo cambia el piso 2 y la rapidez del 3.';}
+[si,ti,xi].forEach(e=>e.addEventListener('input',draw));draw();}
+
+/* ---------- 6. continuation + calculator ---------- */
+{const a=[],b=[];for(let s=0.05;s<=4;s+=0.02){const v=zeta(s,0)[0];if(Math.abs(s-1)>0.03)b.push({x:+s.toFixed(2),y:Math.max(-8,Math.min(8,v))});else b.push({x:+s.toFixed(2),y:null});if(s>1.08)a.push({x:+s.toFixed(2),y:Math.min(8,v)});}
+new Chart($('cCont'),{type:'line',data:{datasets:[{data:a,borderColor:C.blue,borderWidth:3,pointRadius:0},{data:b,borderColor:C.orange,borderWidth:2,borderDash:[6,4],pointRadius:0,spanGaps:false}]},options:base({scales:{x:ax({min:0,max:4,grid:{display:false},title:{display:true,text:'s (real)',color:C.tick}}),y:ax({min:-8,max:8,title:{display:true,text:'ζ(s)',color:C.tick}})}},TT({title:i=>'s = '+es(i[0].parsed.x,2),label:()=>'',afterBody:i=>{const s=i[0].parsed.x;if(Math.abs(s-1)<0.03)return['polo: ζ → ∞'];const e=eta(s,0)[0],d=1-Math.pow(2,1-s);return['η(s) = 1 − 1/2^s + 1/3^s − … = '+es(e,4),'1 − 2^(1−s) = '+es(d,4),'ζ(s) = η / (1 − 2^(1−s)) = '+es(e/d,4),s>1?'(la suma directa da lo mismo)':'(aquí la suma directa no converge)'];}}))});
+function calc(){let s=+$('z-sig').value,t=+$('z-t').value;if(isNaN(s)||isNaN(t))return;s=Math.min(4,Math.max(0.05,s));t=Math.min(60,Math.max(0,t));$('z-sig').value=s;$('z-t').value=t;
+if(Math.abs(s-1)<1e-9&&t===0){setv('z-re','∞','s = 1 es el polo de la zeta.');setv('z-im','—','');setv('z-abs','∞','');$('z-msg').textContent='s = 1 es el polo: la única singularidad de la zeta.';return;}
+const[er,ei]=eta(s,t);const A=Math.pow(2,1-s),l2=ln(2);const dr=1-A*Math.cos(t*l2),di=A*Math.sin(t*l2);const z=zeta(s,t);const m=Math.hypot(z[0],z[1]);
+const how='<b>Cómo se calcula</b>'+F('η(s) = Σ (−1)^(n+1) / n^s = '+es(er,5)+(ei>=0?' + ':' − ')+es(Math.abs(ei),5)+'i')+F('1 − 2^(1−s) = 1 − 2^'+es(1-s,2)+'·(cos − i·sin)('+es(t,2)+'·ln 2) = '+es(dr,5)+(di>=0?' + ':' − ')+es(Math.abs(di),5)+'i')+F('ζ(s) = η(s) / (1 − 2^(1−s))');
+setv('z-re',es(z[0],5),how+R('División compleja: (a+bi)/(c+di) = [(ac+bd) + (bc−ad)i] / (c²+d²)'));
+setv('z-im',es(z[1],5),how);
+setv('z-abs',es(m,5),'<b>Módulo</b>'+F('|ζ| = √('+es(z[0],5)+'² + '+es(z[1],5)+'²) = '+es(m,6))+R(m<0.01?'Prácticamente cero: s es un cero de la zeta.':'Distancia del valor ζ(s) al origen del plano complejo.'));
+$('z-msg').textContent=m<0.01?'Prácticamente cero: has encontrado un cero de la zeta. Su parte real es '+es(s,2)+'.':m<0.3?'Pequeño, pero no cero. Cerca de un cero, no encima.':s>1&&t===0?'En la zona cómoda: la suma directa también daría este valor.':'Valor de la continuación analítica: la suma directa no converge aquí (o lo hace muy despacio), pero la función está definida.';}
+$('z-go').onclick=calc;['z-sig','z-t'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')calc();}));
+document.querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>{const[s,t]=b.dataset.z.split(',');$('z-sig').value=s;$('z-t').value=t;calc();});calc();}
+
+/* ---------- 7. zeros along lines + 3D surface ---------- */
+{const ch=new Chart($('cLine'),{data:{datasets:[{type:'line',data:[],borderColor:C.gray,borderWidth:2,pointRadius:0},{type:'line',data:[],borderColor:C.blue,borderWidth:2,borderDash:[5,3],pointRadius:0},{type:'scatter',data:[],pointRadius:5,pointBackgroundColor:C.orange,pointBorderColor:C.ring,pointBorderWidth:2}]},options:base({scales:{x:ax({min:2,grid:{display:false},title:{display:true,text:'altura t',color:C.tick}}),y:ax({min:0,max:3.5,title:{display:true,text:'|ζ(σ + it)|',color:C.tick}})}},TT({title:i=>'t = '+es(i[0].parsed.x,2),label:()=>'',afterBody:i=>{const t=i[0].parsed.x,s=+$('c-s').value;const a=zeta(0.5,t),b=zeta(s,t);return['ζ(½ + '+es(t,2)+'i) = '+es(a[0],4)+(a[1]>=0?' + ':' − ')+es(Math.abs(a[1]),4)+'i → |ζ| = '+es(Math.hypot(a[0],a[1]),4),'ζ('+es(s,2)+' + '+es(t,2)+'i) = '+es(b[0],4)+(b[1]>=0?' + ':' − ')+es(Math.abs(b[1]),4)+'i → |ζ| = '+es(Math.hypot(b[0],b[1]),4)];}}))});
+const si=$('c-s'),Ti=$('c-T');
+function draw(){const s=+si.value,T=+Ti.value;$('c-so').textContent=es(s,2);$('c-To').textContent=T;$('c-ml').textContent='Mínimo de |ζ| en σ = '+es(s,2);
+const h=[],o=[];let mh=1e9,th=0,ms=1e9,ts=0;for(let t=2;t<=T;t+=0.05){const a=zabs(0.5,t),b=zabs(s,t);h.push({x:+t.toFixed(2),y:a});o.push({x:+t.toFixed(2),y:b});if(a<mh){mh=a;th=t;}if(b<ms){ms=b;ts=t;}}
+ch.data.datasets[0].data=h;ch.data.datasets[1].data=o;ch.data.datasets[2].data=ZEROS.filter(z=>z<=T).map(z=>({x:z,y:0}));ch.options.scales.x.max=T;
+ch.options.scales.y.max=Math.max(3.5,Math.min(8,Math.max(...o.map(p=>p.y))*1.1));ch.update();
+setv('c-mh',es(mh,3),'<b>Mínimo sobre la recta ½</b> entre t = 2 y '+T+F('se alcanza en t ≈ '+es(th,2)+': |ζ(½ + '+es(th,2)+'i)| = '+es(mh,4))+R('No es exactamente 0 porque muestreamos cada 0,05; en el cero exacto ('+es(ZEROS.find(z=>Math.abs(z-th)<0.1)||th,4)+') vale 0.'));
+setv('c-ms',es(ms,3),'<b>Mínimo sobre la recta σ = '+es(s,2)+'</b>'+F('se alcanza en t ≈ '+es(ts,2)+': |ζ| = '+es(ms,4))+R('Baja cerca de las alturas de los ceros, pero nunca llega a 0: fuera de ½ no hay ceros.'));}
+si.addEventListener('input',draw);Ti.addEventListener('input',draw);draw();
+const xs=[],ys=[],z=[];for(let s=0.02;s<=1.0001;s+=0.02)xs.push(+s.toFixed(2));for(let t=1;t<=40.0001;t+=0.15)ys.push(+t.toFixed(2));
+for(const t of ys)z.push(xs.map(s=>Math.min(4,zabs(s,t))));
+const lz=ys.map(t=>Math.min(4,zabs(0.5,t))+0.03);const zz=ZEROS.filter(v=>v<=40);
+const axp=(t)=>({title:{text:t,font:{size:12,color:C.tick}},tickfont:{size:11,color:C.tick},gridcolor:'rgba(136,135,128,0.3)',zerolinecolor:'rgba(136,135,128,0.5)',backgroundcolor:'rgba(0,0,0,0)'});
+Plotly.newPlot('p3d',[{type:'surface',x:xs,y:ys,z:z,showscale:false,colorscale:[[0,'#085041'],[0.35,'#1D9E75'],[1,'#E1F5EE']],hovertemplate:'σ = %{x}<br>t = %{y}<br>|ζ| = %{z:.3f}<extra></extra>'},{type:'scatter3d',mode:'lines',x:ys.map(()=>0.5),y:ys,z:lz,line:{color:'#D85A30',width:4},hoverinfo:'skip'},{type:'scatter3d',mode:'markers',x:zz.map(()=>0.5),y:zz,z:zz.map(()=>0.02),marker:{size:5,color:'#D85A30'},hovertemplate:'cero: ζ(½ + %{y}i) = 0<extra></extra>'}],{margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',showlegend:false,scene:{xaxis:axp('σ (parte real)'),yaxis:axp('t (altura)'),zaxis:Object.assign(axp('|ζ(s)|'),{range:[0,4]}),aspectmode:'manual',aspectratio:{x:0.8,y:1.7,z:0.7},camera:{eye:{x:1.7,y:-1.3,z:1.0}}}},{displayModeBar:false,responsive:true});}
+
+/* ---------- shared for waves ---------- */
+const lam=n=>{for(let p=2;p<=n;p++){if(n%p===0){let m=n;while(m%p===0)m/=p;return m===1?ln(p):0;}}return 0;};
+const PSI=[0,0];{let a=0;for(let n=1;n<=600;n++){a+=lam(n);PSI[n]=a;}}
+const smooth=x=>x-ln(2*Math.PI)-0.5*ln(1-1/(x*x));
+const wave=(x,s,g)=>{const L=ln(x);return -2*Math.pow(x,s)*(s*Math.cos(g*L)+g*Math.sin(g*L))/(s*s+g*g);};
+const waveTip=(x,s,g)=>{const L=ln(x);return['x^σ = '+es(x,1)+'^'+es(s,2)+' = '+es(Math.pow(x,s),3),'t·ln x = '+es(g,2)+' × '+es(L,3)+' = '+es(g*L,2)+' rad','onda = −2·x^σ·(σ·cos + t·sin)(t·ln x) / (σ² + t²)','= '+es(wave(x,s,g),3)];};
+
+/* ---------- 8. height vs volume ---------- */
+{const X=100;const xs=[];for(let x=2;x<=X;x+=0.05)xs.push(+x.toFixed(2));const gap=xs.map(x=>({x,y:PSI[Math.floor(x)]-smooth(x)}));const pr=[];for(let p=2;p<=X;p++)if(isP(p))pr.push({x:p,y:PSI[p]-smooth(p)});
+const ch=new Chart($('cVol'),{data:{datasets:[{type:'line',data:gap,borderColor:C.gray,borderWidth:2,pointRadius:0},{type:'line',data:[],borderColor:C.blue,borderWidth:2,pointRadius:0},{type:'scatter',data:pr,pointRadius:3,pointBackgroundColor:C.teal,pointBorderWidth:0}]},options:base({scales:{x:ax({min:2,max:X,grid:{display:false},title:{display:true,text:'x',color:C.tick}}),y:ax({min:-8,max:8})}},TT({title:i=>'x = '+es(i[0].parsed.x,1),label:()=>'',afterBody:i=>{const x=i[0].parsed.x;return['corrección real ψ(x) − x = '+es(PSI[Math.floor(x)]-smooth(x),3)].concat(waveTip(x,+$('v-s').value,+$('v-t').value));}}))});
+const ti=$('v-t'),si=$('v-s');
+function draw(){const t=+ti.value,s=+si.value;$('v-to').textContent=es(t,2);$('v-so').textContent=es(s,2);
+ch.data.datasets[1].data=xs.map(x=>({x,y:wave(x,s,t)}));const mod=Math.hypot(s,t);const A=2*Math.pow(X,s)/mod,B=2*Math.pow(1e6,s)/mod;const lim=Math.max(8,A*1.15);ch.options.scales.y.min=-lim;ch.options.scales.y.max=lim;ch.update();
+const osc=t*ln(X/2)/(2*Math.PI);
+setv('v-osc',es(osc,1),'<b>Cuántas veces oscila la onda entre 2 y 100</b>'+F('fase = t · ln x; de x = 2 a 100 avanza t · (ln 100 − ln 2) = '+es(t,2)+' × '+es(ln(50),3)+' = '+es(t*ln(50),2)+' rad')+F('vueltas = '+es(t*ln(50),2)+' / 2π = '+es(osc,2))+R('Solo depende de t. Por eso t es la frecuencia.'));
+setv('v-amp',es(A,2),'<b>Amplitud en x = 100</b>'+F('2 · x^σ / |ρ| = 2 × 100^'+es(s,2)+' / √('+es(s,2)+'² + '+es(t,2)+'²)')+F('= 2 × '+es(Math.pow(X,s),3)+' / '+es(mod,3)+' = '+es(A,3))+R('x^σ solo depende de σ: por eso σ es el volumen.'));
+setv('v-big',es(B,0),'<b>Amplitud en x = 10⁶</b>'+F('2 × (10⁶)^'+es(s,2)+' / '+es(mod,3)+' = 2 × '+es(Math.pow(1e6,s),0)+' / '+es(mod,3)+' = '+es(B,1))+R('Hasta 10⁶ hay 78.498 primos. Con σ = ½ la onda mide ~'+es(2*1000/mod,0)+'; con σ = 0,8, ~'+es(2*Math.pow(1e6,0.8)/mod,0)+'.'));
+$('v-msg').textContent=s>0.5?'Has subido σ: la onda oscila igual de deprisa, pero su amplitud se dispara (en un millón valdría '+es(B,0)+'). Una onda así desbordaría la escalera: esto es lo que la hipótesis dice que no pasa.':s<0.5?'Con σ < ½ la onda se encoge y casi no corrige nada. Por simetría de la zeta, si hubiera un cero aquí habría otro en 1 − σ, así que el caso σ < ½ nunca viene solo.':t<10?'t bajo: pocas oscilaciones, la onda solo sigue la tendencia gruesa de la escalera.':t<30?'t medio: la onda ya marca varias zonas de la escalera, pero sin precisión.':'t alto: oscila muchas veces y aporta detalle fino. Sumada a las demás, coloca los saltos en los primos exactos.';}
+ti.addEventListener('input',draw);si.addEventListener('input',draw);draw();}
+
+/* ---------- 9. waves ---------- */
+{const ch=new Chart($('cWave'),{type:'line',data:{datasets:[{data:[],borderColor:C.blue,borderWidth:1.5,pointRadius:0},{data:[],borderColor:C.gray,borderWidth:1,borderDash:[4,4],pointRadius:0},{data:[],borderColor:C.gray,borderWidth:1,borderDash:[4,4],pointRadius:0}]},options:base({scales:{x:ax({min:2,grid:{display:false},ticks:{color:C.tick,maxTicksLimit:6,callback:v=>es(v)},title:{display:true,text:'x',color:C.tick}}),y:ax({})}},TT({title:i=>'x = '+es(i[0].parsed.x,0),label:()=>'',afterBody:i=>waveTip(i[0].parsed.x,+$('w-s').value,ZEROS[+$('w-k').value-1])}))});
+const ki=$('w-k'),si=$('w-s'),Xi=$('w-X');
+function draw(){const k=+ki.value,s=+si.value,X=Math.round(Math.pow(10,+Xi.value)),g=ZEROS[k-1];$('w-ko').textContent=k;$('w-so').textContent=es(s,2);$('w-Xo').textContent=es(X);
+const mod=Math.hypot(s,g);const xs=[];const step=Math.max(1,X/800);for(let x=2;x<=X;x+=step)xs.push(x);
+ch.data.datasets[0].data=xs.map(x=>({x,y:wave(x,s,g)}));ch.data.datasets[1].data=xs.map(x=>({x,y:2*Math.pow(x,s)/mod}));ch.data.datasets[2].data=xs.map(x=>({x,y:-2*Math.pow(x,s)/mod}));
+const A=2*Math.pow(X,s)/mod;ch.options.scales.x.max=X;ch.options.scales.y.min=-A*1.1;ch.options.scales.y.max=A*1.1;ch.update();
+setv('w-g',es(g,3),'<b>Cero número '+k+'</b>'+F('ρ = '+es(s,2)+' + '+es(g,6)+'i')+R('Las alturas de los ceros no siguen ninguna fórmula conocida; se calculan buscando dónde |ζ(½ + it)| se anula.'));
+setv('w-a',es(A,2),'<b>Amplitud máxima en x = '+es(X)+'</b>'+F('2 · x^σ / |ρ|, con |ρ| = √(σ² + t²) = √('+es(s,2)+'² + '+es(g,2)+'²) = '+es(mod,3))+F('2 × '+es(X)+'^'+es(s,2)+' / '+es(mod,3)+' = 2 × '+es(Math.pow(X,s),2)+' / '+es(mod,3)+' = '+es(A,3)));
+setv('w-p',es(PI[Math.min(X,M)]),'<b>π('+es(X)+') = '+es(PI[Math.min(X,M)])+'</b>'+R('Compara con la amplitud de la onda: con σ = ½ es una fracción pequeña; con σ cerca de 1 la onda sola sería del orden de todos los primos.'));}
+[ki,si,Xi].forEach(e=>e.addEventListener('input',draw));draw();}
+{const XS=[50,100,200,500];let gapMode=false;
+const ch=new Chart($('cRec'),{data:{datasets:[{type:'line',data:[],stepped:'before',borderColor:C.gray,borderWidth:2,pointRadius:0},{type:'line',data:[],borderColor:C.blue,borderWidth:2,borderDash:[5,3],pointRadius:0},{type:'scatter',data:[],pointRadius:3,pointBackgroundColor:C.teal,pointBorderWidth:0}]},options:base({scales:{x:ax({min:1.5,grid:{display:false},title:{display:true,text:'x',color:C.tick}}),y:ax({})}},TT({title:i=>'x = '+es(i[0].parsed.x,1),label:()=>'',afterBody:i=>{const x=i[0].parsed.x,N=+$('r-n').value,s1=+$('r-s').value;let w=0;for(let k=0;k<N;k++)w+=wave(x,k===0?s1:0.5,ZEROS[k]);const sm=smooth(x);const fl=Math.floor(x);return gapMode?['corrección real: ψ('+fl+') − lisa = '+es(PSI[fl]-sm,3),'suma de '+N+' ondas = '+es(w,3)]:['ψ('+fl+') real = '+es(PSI[fl],3),'parte lisa: x − ln 2π − ½ln(1−x⁻²) = '+es(sm,3),'suma de '+N+' ondas = '+es(w,3),'reconstrucción = '+es(sm+w,3)];}}))});
+const ni=$('r-n'),Xi=$('r-X'),si=$('r-s');
+function draw(){const N=+ni.value,X=XS[+Xi.value],s1=+si.value;$('r-no').textContent=N;$('r-Xo').textContent=es(X);$('r-so').textContent=es(s1,2);
+const xs=[];const st=X/900;for(let x=1.5;x<=X;x+=st)xs.push(x);
+const rec=x=>{let y=gapMode?0:smooth(x);for(let k=0;k<N;k++)y+=wave(x,k===0?s1:0.5,ZEROS[k]);return y;};
+const real=gapMode?xs.map(x=>({x,y:PSI[Math.floor(x)]-smooth(x)})):Array.from({length:X},(_,i)=>({x:i+1,y:PSI[i+1]}));
+ch.data.datasets[0].data=real;ch.data.datasets[0].stepped=gapMode?false:'before';ch.data.datasets[1].data=xs.map(x=>({x,y:rec(x)}));
+const pr=[];for(let p=2;p<=X;p++)if(isP(p))pr.push({x:p,y:gapMode?PSI[p]-smooth(p):PSI[p]});ch.data.datasets[2].data=pr;
+ch.options.scales.x.max=X;if(gapMode){const A=Math.max(6,...xs.map(x=>Math.abs(rec(x))))*1.1;ch.options.scales.y.min=-A;ch.options.scales.y.max=A;}else{ch.options.scales.y.min=0;ch.options.scales.y.max=Math.max(X*1.1,Math.max(...xs.map(x=>rec(x)))*1.05);}
+ch.update();
+let se=0,mx=0,xm=0;for(const x of xs){const e=Math.abs(rec(x)-(gapMode?PSI[Math.floor(x)]-smooth(x):PSI[Math.floor(x)]));se+=e;if(e>mx){mx=e;xm=x;}}
+setv('r-err',es(se/xs.length,2),'<b>Error medio</b>'+F('promedio de |reconstrucción − real| en '+xs.length+' puntos entre 1,5 y '+X)+R('Baja al añadir ceros. Con todos los infinitos ceros sería 0 (salvo en los saltos).'));
+setv('r-max',es(mx,2),'<b>Error máximo</b>'+F('se da en x ≈ '+es(xm,1))+R('Los máximos están justo en los saltos: una suma finita de ondas suaves nunca puede hacer un escalón vertical perfecto.'));
+$('r-msg').textContent=N===0?'Sin ceros: solo la parte lisa, que no sabe dónde están los primos.':s1>0.5?'El primer cero está fuera de ½: su onda crece como x^'+es(s1,2)+' y arrastra la reconstrucción lejos de la escalera. Así serían unos primos mal repartidos.':N<10?'Pocas ondas: la curva azul empieza a ondular hacia los primeros primos.':N<30?'Las subidas se afilan y se colocan sobre los puntos verdes.':'Con muchas ondas la curva azul calca la escalera. Los saltos pequeños que ves en 4, 8, 9, 16, 25, 27… son potencias de primos: ψ también las cuenta.';}
+$('r-full').onclick=()=>{gapMode=false;$('r-full').classList.add('on');$('r-gap').classList.remove('on');draw();};
+$('r-gap').onclick=()=>{gapMode=true;$('r-gap').classList.add('on');$('r-full').classList.remove('on');draw();};
+[ni,Xi,si].forEach(e=>e.addEventListener('input',draw));draw();}
+{const X=60;const xs=[];for(let x=1.5;x<=X;x+=0.1)xs.push(+x.toFixed(2));const gap=xs.map(x=>PSI[Math.floor(x)]-smooth(x));
+const W=ZEROS.slice(0,20).map(g=>xs.map(x=>wave(x,0.5,g)));const P=[];for(let n=2;n<=X;n++)if(isP(n))P.push(n);
+const axp=(t)=>({title:{text:t,font:{size:12,color:C.tick}},tickfont:{size:11,color:C.tick},gridcolor:'rgba(136,135,128,0.3)',zerolinecolor:'rgba(136,135,128,0.5)',backgroundcolor:'rgba(0,0,0,0)'});
+const layout={margin:{l:0,r:0,t:0,b:0},paper_bgcolor:'rgba(0,0,0,0)',showlegend:false,scene:{xaxis:axp('x'),yaxis:axp('altura del cero'),zaxis:Object.assign(axp('corrección'),{range:[-4,4]}),aspectmode:'manual',aspectratio:{x:1.5,y:1.3,z:0.6},camera:{eye:{x:0.9,y:-1.9,z:0.9}}}};
+function build(K){const tr=[];for(let k=0;k<K;k++)tr.push({type:'scatter3d',mode:'lines',x:xs,y:xs.map(()=>ZEROS[k]),z:W[k],line:{color:'#d95926',width:3},hovertemplate:'onda del cero '+(k+1)+' (t = '+es(ZEROS[k],2)+')<br>x = %{x}<br>valor = %{z:.3f}<extra></extra>'});
+tr.push({type:'scatter3d',mode:'markers',x:ZEROS.slice(0,K).map(()=>1.5),y:ZEROS.slice(0,K),z:ZEROS.slice(0,K).map(()=>0),marker:{size:4,color:'#d95926'},hovertemplate:'cero a altura %{y:.4f}<extra></extra>'});
+const sum=xs.map((x,i)=>{let s=0;for(let k=0;k<K;k++)s+=W[k][i];return s;});
+tr.push({type:'scatter3d',mode:'lines',x:xs,y:xs.map(()=>0),z:gap,line:{color:'#898781',width:4},hovertemplate:'corrección real<br>x = %{x}<br>%{z:.3f}<extra></extra>'});
+tr.push({type:'scatter3d',mode:'lines',x:xs,y:xs.map(()=>0),z:sum,line:{color:'#2a78d6',width:6},hovertemplate:'suma de '+K+' ondas<br>x = %{x}<br>%{z:.3f}<extra></extra>'});
+tr.push({type:'scatter3d',mode:'markers',x:P,y:P.map(()=>0),z:P.map(p=>PSI[p]-smooth(p)),marker:{size:4,color:'#1baf7a'},hovertemplate:'primo %{x}<extra></extra>'});return tr;}
+const ki=$('t-k');Plotly.newPlot('p3w',build(+ki.value),layout,{displayModeBar:false,responsive:true});
+ki.addEventListener('input',()=>{$('t-ko').textContent=ki.value;Plotly.react('p3w',build(+ki.value),layout);});}
+
+/* ---------- 10. map linked to staircase ---------- */
+{const X=60;const xs=[];for(let x=1.5;x<=X;x+=0.08)xs.push(+x.toFixed(2));const real=[];for(let n=1;n<=X;n++)real.push({x:n,y:PSI[n]});
+const cz=new Chart($('cMapZ'),{data:{datasets:[{type:'line',data:[{x:0,y:0.5},{x:105,y:0.5}],borderColor:C.gray,borderWidth:1,borderDash:[4,4],pointRadius:0},{type:'scatter',data:[],pointRadius:5,pointBorderColor:C.ring,pointBorderWidth:1.5,pointBackgroundColor:[]}]},options:base({interaction:{mode:'nearest',intersect:true},scales:{x:ax({min:0,max:105,grid:{display:false},ticks:{color:C.tick,stepSize:20},title:{display:true,text:'altura t del cero',color:C.tick}}),y:ax({min:0,max:1,ticks:{color:C.tick,stepSize:0.5},title:{display:true,text:'σ',color:C.tick}})}},TT({title:i=>'cero en σ = '+es(i[0].parsed.y,2)+', t = '+es(i[0].parsed.x,4),label:()=>'',afterBody:i=>{const s=i[0].parsed.y,t=i[0].parsed.x;return['su onda: −2·x^'+es(s,2)+'·(…)/|ρ|, |ρ| = '+es(Math.hypot(s,t),3),'oscila '+es(t*ln(30)/(2*Math.PI),1)+' veces entre 2 y 60','amplitud en 60: '+es(2*Math.pow(60,s)/Math.hypot(s,t),3)];}}))});
+const cp=new Chart($('cMapP'),{type:'line',data:{datasets:[{data:real,stepped:'before',borderColor:C.gray,borderWidth:2,pointRadius:0},{data:[],borderColor:C.blue,borderWidth:2,borderDash:[5,3],pointRadius:0}]},options:base({scales:{x:ax({min:1.5,max:X,grid:{display:false},title:{display:true,text:'x',color:C.tick}}),y:ax({min:-3,max:68})}},TT({title:i=>'x = '+es(i[0].parsed.x,1),label:()=>'',afterBody:i=>{const x=i[0].parsed.x;const N=+$('h-n').value,s1=+$('h-s').value;let w=0;for(let k=0;k<N;k++)w+=wave(x,k===0?s1:0.5,ZEROS[k]);return['ψ real = '+es(PSI[Math.floor(x)],3),'lisa '+es(smooth(x),3)+' + '+N+' ondas '+es(w,3)+' = '+es(smooth(x)+w,3)];}}))});
+const ni=$('h-n'),si=$('h-s');
+function draw(){const N=+ni.value,s1=+si.value;$('h-no').textContent=N;$('h-so').textContent=es(s1,2);
+cz.data.datasets[1].data=ZEROS.slice(0,30).map((g,i)=>({x:g,y:i===0?s1:0.5}));cz.data.datasets[1].pointBackgroundColor=ZEROS.slice(0,30).map((g,i)=>i<N?C.orange:'#b4b2a9');cz.update();
+cp.data.datasets[1].data=xs.map(x=>{let y=smooth(x);for(let k=0;k<N;k++)y+=wave(x,k===0?s1:0.5,ZEROS[k]);return{x,y};});cp.update();
+$('h-msg').textContent=N===0?'Sin ceros: solo la parte lisa.':s1>0.5?'Un solo cero fuera de ½ y la curva azul se separa de la escalera real. La hipótesis dice que esto no ocurre nunca.':N<8?'Pocos ceros encendidos: la curva azul empieza a ondular.':'Todos los ceros en ½: la curva azul calca la escalera, salto a salto.';}
+ni.addEventListener('input',draw);si.addEventListener('input',draw);draw();}
+
+/* ---------- 11. knots ---------- */
+{/* knot 1 */
+const ch=new Chart($('cN1'),{type:'line',data:{datasets:[{data:[],borderColor:C.blue,borderWidth:2,pointRadius:0},{data:[],borderColor:C.gray,borderWidth:1.5,borderDash:[6,4],pointRadius:0}]},options:base({scales:{x:ax({min:0,max:60,grid:{display:false},title:{display:true,text:'t',color:C.tick}}),y:ax({min:0})}},TT({title:i=>'t = '+es(i[0].parsed.x,1),label:i=>i.datasetIndex===0?'|ζ| = '+es(i.parsed.y,4):'cota = '+es(i.parsed.y,4)}))});
+const si=$('n1-s');function draw(){const s=+si.value;$('n1-so').textContent=es(s,2);const d=[];let mn=1e9;for(let t=0;t<=60;t+=0.1){const v=zabs(s,t);d.push({x:+t.toFixed(1),y:v});if(v<mn)mn=v;}
+const b=zeta(2*s,0)[0]/zeta(s,0)[0];ch.data.datasets[0].data=d;ch.data.datasets[1].data=[{x:0,y:b},{x:60,y:b}];ch.options.scales.y.max=Math.max(...d.map(p=>p.y))*1.1;ch.update();
+setv('n1-b',es(b,4),'<b>Cota del producto de Euler</b>'+F('|ζ(σ+it)| ≥ ζ(2σ)/ζ(σ) = '+es(zeta(2*s,0)[0],4)+' / '+es(zeta(s,0)[0],4)+' = '+es(b,4))+R('Sale de acotar cada factor |1/(1−p^−s)| por debajo. Positiva para todo σ > 1: imposible un cero.'));
+setv('n1-m',es(mn,4),'<b>Mínimo de |ζ| en 0 ≤ t ≤ 60</b> sobre σ = '+es(s,2)+R('Queda por encima de la cota, como debe.'));}
+si.addEventListener('input',draw);draw();}
+{/* knot 2 */
+const ch=new Chart($('cN2'),{data:{datasets:[{type:'line',data:[{x:0.5,y:-45},{x:0.5,y:45}],borderColor:C.gray,borderWidth:1,borderDash:[4,4],pointRadius:0},{type:'scatter',data:ZEROS.slice(0,8).flatMap(g=>[{x:0.5,y:g},{x:0.5,y:-g}]),pointRadius:3,pointBackgroundColor:C.teal,pointBorderWidth:0},{type:'scatter',data:[],pointRadius:7,pointBackgroundColor:C.red,pointBorderColor:C.ring,pointBorderWidth:2},{type:'line',data:[],borderColor:C.red,borderWidth:1,borderDash:[3,3],pointRadius:0,showLine:true}]},options:base({interaction:{mode:'nearest',intersect:true},scales:{x:ax({min:0,max:1,grid:{display:false},ticks:{color:C.tick,stepSize:0.25},title:{display:true,text:'σ (el eje punteado es ½)',color:C.tick}}),y:ax({min:-45,max:45,title:{display:true,text:'t',color:C.tick}})}},TT({title:i=>'σ = '+es(i[0].parsed.x,2)+', t = '+es(i[0].parsed.y,2),label:i=>i.datasetIndex===1?'cero real (en ½)':'cero hipotético'}))});
+const si=$('n2-s');function draw(){const s=+si.value;$('n2-so').textContent=es(s,2);const t=27;const q=[{x:s,y:t},{x:1-s,y:t},{x:s,y:-t},{x:1-s,y:-t}];ch.data.datasets[2].data=q;ch.data.datasets[3].data=[{x:s,y:t},{x:1-s,y:t},{x:1-s,y:-t},{x:s,y:-t},{x:s,y:t}];ch.update();
+const th=Math.max(s,1-s);setv('n2-q',s===0.5?'solo la pareja ½ ± 27i':es(s,2)+' ± 27i  y  '+es(1-s,2)+' ± 27i','<b>Simetrías</b>'+F('ecuación funcional: ρ → 1 − ρ (espejo en ½)')+F('conjugación: ρ → ρ̄ (espejo en el eje real)')+R('Las dos juntas convierten un cero fuera de la línea en cuatro.'));
+setv('n2-th',es(th,2),'<b>Θ = mayor parte real de todos los ceros</b>'+F('max('+es(s,2)+', '+es(1-s,2)+') = '+es(th,2))+R('El error de Gauss crece como x^Θ · ln x. Por eso un cero en 0,2 y uno en 0,8 son igual de dañinos.'));
+$('n2-msg').textContent=s===0.5?'Sobre el eje, el cero y su reflejo coinciden: solo quedan ρ y su conjugado. Esto es lo que ocurre con todos los ceros conocidos.':'Un cero en σ = '+es(s,2)+' arrastra tres más y forma un rectángulo centrado en ½. Nunca se ha encontrado ninguno así.';}
+si.addEventListener('input',draw);draw();}
+{/* knot 3 */
+const a=[],b=[];for(let k=1;k<=6;k+=0.02){const x=Math.round(Math.pow(10,k));if(x<10||x>M)continue;a.push({x,y:PI[x]/LI[x]});b.push({x,y:PI[x]/(x/ln(x))});}
+new Chart($('cN3'),{type:'line',data:{datasets:[{data:a,borderColor:C.orange,borderWidth:2,pointRadius:0},{data:b,borderColor:C.gray,borderWidth:1.5,borderDash:[2,3],pointRadius:0},{data:[{x:10,y:1},{x:M,y:1}],borderColor:C.grid,borderWidth:1,pointRadius:0}]},options:base({scales:{x:ax({type:'logarithmic',min:10,max:M,grid:{display:false},ticks:{color:C.tick,callback:v=>[10,100,1000,10000,100000,1000000].includes(v)?es(v):''}}),y:ax({min:0.8,max:1.3})}},TT({title:i=>'x = '+es(i[0].parsed.x),label:()=>'',afterBody:i=>{const x=i[0].parsed.x;return['π(x)/Li(x) = '+es(PI[x])+' / '+es(LI[x],1)+' = '+es(PI[x]/LI[x],4),'π(x)/(x/ln x) = '+es(PI[x])+' / '+es(x/ln(x),1)+' = '+es(PI[x]/(x/ln(x)),4)];}}))});}
+/* compute zeros up to 260 (used by knot 4 and section 12) */
+const theta=t=>t/2*ln(t/(2*Math.PI))-t/2-Math.PI/8+1/(48*t)+7/(5760*t*t*t);
+const Zf=t=>{const z=zeta(0.5,t);const th=theta(t);return Math.cos(th)*z[0]-Math.sin(th)*z[1];};
+const ZC=[];{let prev=Zf(10),tp=10;for(let t=10.05;t<=260;t+=0.05){const v=Zf(t);if(prev*v<0){let a=tp,b=t,fa=prev;for(let i=0;i<36;i++){const m=(a+b)/2,fm=Zf(m);if(fa*fm<0)b=m;else{a=m;fa=fm;}}ZC.push((a+b)/2);}prev=v;tp=t;}}
+const NT=T=>T/(2*Math.PI)*ln(T/(2*Math.PI*Math.E))+7/8;
+{/* knot 4 */
+const st=[{x:0,y:0}];ZC.forEach((g,i)=>st.push({x:g,y:i+1}));st.push({x:260,y:ZC.length});
+const fm=[];for(let T=10;T<=260;T+=2)fm.push({x:T,y:NT(T)});
+let md=0,mt=0;for(let T=15;T<=260;T+=0.5){const n=ZC.filter(g=>g<=T).length;const d=Math.abs(n-NT(T));if(d>md){md=d;mt=T;}}
+new Chart($('cN4'),{type:'line',data:{datasets:[{data:st,stepped:'before',borderColor:C.blue,borderWidth:2,pointRadius:0},{data:fm,borderColor:C.orange,borderWidth:2,borderDash:[6,4],pointRadius:0}]},options:base({scales:{x:ax({min:0,max:260,grid:{display:false},title:{display:true,text:'altura T',color:C.tick}}),y:ax({min:0,title:{display:true,text:'ceros hasta T',color:C.tick}})}},TT({title:i=>'T = '+es(i[0].parsed.x,1),label:()=>'',afterBody:i=>{const T=i[0].parsed.x;return['ceros contados: '+ZC.filter(g=>g<=T).length,'fórmula: (T/2π)·ln(T/2πe) + 7/8 = '+es(T/(2*Math.PI),2)+' × '+es(ln(T/(2*Math.PI*Math.E)),3)+' + 0,875 = '+es(NT(T),2)];}}))});
+setv('n4-c',ZC.length,'<b>Calculados ahora</b> buscando cambios de signo de la función Z de Hardy, Z(t) = e^{iθ(t)} ζ(½ + it), que es real sobre la línea.'+R('Primeros: '+ZC.slice(0,4).map(g=>es(g,3)).join(', ')+' …'));
+setv('n4-f',es(NT(260),2),'<b>Fórmula de Riemann–von Mangoldt</b>'+F('(260/2π) · ln(260/2πe) + 7/8 = '+es(260/(2*Math.PI),3)+' × '+es(ln(260/(2*Math.PI*Math.E)),4)+' + 0,875 = '+es(NT(260),3)));
+setv('n4-d',es(md,2),'<b>Mayor desviación</b> en T ≈ '+es(mt,1)+R('La escalera de los ceros nunca se aleja más de ~1 de la fórmula lisa en este rango. Compara con los primos, cuya desviación crece como √x.'));}
+
+/* ---------- 12. spacing histogram ---------- */
+{const sp=[];for(let i=0;i<ZC.length-1;i++){const g=ZC[i];sp.push((ZC[i+1]-g)*ln(g/(2*Math.PI))/(2*Math.PI));}
+const B=12,w=3/B;const h=new Array(B).fill(0);sp.forEach(v=>{const k=Math.min(B-1,Math.floor(v/w));h[k]++;});
+const bars=h.map((c,k)=>({x:+(k*w+w/2).toFixed(3),y:c/(sp.length*w)}));
+const gue=[],poi=[];for(let x=0;x<=3;x+=0.05){gue.push({x,y:32/(Math.PI*Math.PI)*x*x*Math.exp(-4*x*x/Math.PI)});poi.push({x,y:Math.exp(-x)});}
+new Chart($('cM'),{data:{datasets:[{type:'bar',data:bars,backgroundColor:C.blue+'99',borderColor:C.blue,borderWidth:1,barPercentage:1,categoryPercentage:1,grouped:false},{type:'line',data:gue,borderColor:C.orange,borderWidth:2,borderDash:[6,4],pointRadius:0},{type:'line',data:poi,borderColor:C.gray,borderWidth:1.5,borderDash:[2,3],pointRadius:0}]},options:base({scales:{x:ax({type:'linear',min:0,max:3,offset:false,grid:{display:false},title:{display:true,text:'distancia al siguiente cero (media = 1)',color:C.tick}}),y:ax({min:0,title:{display:true,text:'densidad',color:C.tick}})}},TT({title:i=>'distancia ≈ '+es(i[0].parsed.x,2),label:i=>i.datasetIndex===0?'ceros: densidad '+es(i.parsed.y,2):i.datasetIndex===1?'GUE: (32/π²)·s²·e^(−4s²/π) = '+es(i.parsed.y,3):'Poisson: e^(−s) = '+es(i.parsed.y,3)}))});
+const mn=Math.min(...sp);setv('m-n',sp.length,'<b>Distancias</b> entre ceros consecutivos, de los '+ZC.length+' calculados.'+F('normalizada = (γₙ₊₁ − γₙ) · ln(γₙ/2π) / 2π')+R('El factor ln(γ/2π)/2π es la densidad local de ceros: así la distancia media es 1 en todas las alturas.'));
+setv('m-min',es(mn,3),'<b>La más pequeña</b>'+R('Poisson predeciría muchas distancias cerca de 0; GUE casi ninguna. Los ceros se repelen.'));
+setv('m-small',es(100*sp.filter(v=>v<0.3).length/sp.length,1)+' %','<b>Fracción con distancia &lt; 0,3</b>'+F('GUE predice ∫₀^0,3 (32/π²)·s²·e^(−4s²/π) ds ≈ 2,9 %')+F('Poisson predice 1 − e^(−0,3) ≈ 25,9 %')+R('Medido: '+es(100*sp.filter(v=>v<0.3).length/sp.length,1)+' %. Mucho más cerca de GUE.'));}
+
+/* ---------- 13. Cramér model & gaps ---------- */
+{let seed=12345;const rnd=()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+const xs=[];for(let k=1;k<=6;k+=0.02){const x=Math.round(Math.pow(10,k));if(x>=10&&x<=M)xs.push(x);}
+const realD=xs.map(x=>({x,y:LI[x]-PI[x]}));
+const ch=new Chart($('cCr'),{type:'line',data:{datasets:[{data:realD,borderColor:C.orange,borderWidth:2,pointRadius:0},{data:[],borderColor:C.gray,borderWidth:1.5,pointRadius:0},{data:xs.map(x=>({x,y:Math.sqrt(x)})),borderColor:C.teal,borderWidth:1,borderDash:[6,4],pointRadius:0},{data:xs.map(x=>({x,y:-Math.sqrt(x)})),borderColor:C.teal,borderWidth:1,borderDash:[6,4],pointRadius:0}]},options:base({scales:{x:ax({type:'logarithmic',min:10,max:M,grid:{display:false},ticks:{color:C.tick,callback:v=>[10,100,1000,10000,100000,1000000].includes(v)?es(v):''}}),y:ax({min:-1100,max:1100})}},TT({title:i=>'x = '+es(i[0].parsed.x),label:i=>['primos reales: Li − π = '+es(i.parsed.y,1),'primos al azar: Li − cuenta = '+es(i.parsed.y,1),'+√x = '+es(i.parsed.y,1),'−√x = '+es(i.parsed.y,1)][i.datasetIndex]}))});
+function sim(){let c=1;let k=0;const out=[];for(let n=3;n<=M;n++){if(rnd()<1/ln(n))c++;if(n===xs[k]){out.push({x:n,y:LI[n]-c});k++;}}ch.data.datasets[1].data=out;ch.update();}
+$('cr-new').onclick=sim;sim();
+/* ---------- 5c. chain of the alternating series vs the critical line ---------- */
+{const cv=$('cEta'),ctx=cv.getContext('2d');const si=$('e-s'),ti=$('e-t'),play=$('e-play');let anim=null;
+const W=cv.width,H=cv.height,SX0=40,SX1=190,SY0=H-40,SY1=30,TMAX=45;const sx=s=>SX0+s*(SX1-SX0),sy=t=>SY0-t/TMAX*(SY0-SY1);
+const cx=480,cy=H/2;
+function draw(){const sig=+si.value,t=+ti.value;
+const TR=[];for(let u=0;u<=t+1e-9;u+=0.05)TR.push(eta(sig,u));TR.push(eta(sig,t));
+const N=120;let re=0,im=0;const pts=[[0,0]];for(let n=1;n<=N;n++){const r=(n%2?1:-1)*Math.pow(n,-sig),a=-t*ln(n);re+=r*Math.cos(a);im+=r*Math.sin(a);pts.push([re,im]);}
+let ext=1.2;TR.concat(pts).forEach(p=>{ext=Math.max(ext,Math.abs(p[0])*(H/2-20)/(W-cx-20),Math.abs(p[1]));});const sc=Math.min(150,(H/2-20)/ext);const PX=v=>cx+v*sc,PY=v=>cy-v*sc;$('e-so').textContent=es(sig,2);$('e-to').textContent=es(t,2);
+ctx.clearRect(0,0,W,H);ctx.font='12px system-ui';
+/* left: strip */
+ctx.fillStyle=C.grid;ctx.fillRect(SX0,SY1,SX1-SX0,SY0-SY1);ctx.setLineDash([5,4]);ctx.strokeStyle=C.teal;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(sx(0.5),SY1);ctx.lineTo(sx(0.5),SY0);ctx.stroke();ctx.setLineDash([]);
+ctx.fillStyle=C.tick;ctx.textAlign='center';ctx.fillText('0',sx(0),SY0+16);ctx.fillText('½',sx(0.5),SY0+16);ctx.fillText('1',sx(1),SY0+16);ctx.fillText('σ',(SX0+SX1)/2,SY0+32);ctx.textAlign='left';ctx.fillText('t',SX0-14,SY1+10);
+ZEROS.filter(z=>z<=TMAX).forEach(z=>{ctx.fillStyle=C.orange;ctx.beginPath();ctx.arc(sx(0.5),sy(z),4,0,7);ctx.fill();});
+ctx.fillStyle=C.tick;[14.13,21.02,25.01].forEach(z=>ctx.fillText(es(z,2),sx(0.5)+8,sy(z)+4));
+ctx.fillStyle=C.blue;ctx.beginPath();ctx.arc(sx(sig),sy(t),7,0,7);ctx.fill();ctx.strokeStyle=C.ring;ctx.lineWidth=2;ctx.stroke();
+/* right: plane */
+ctx.strokeStyle=C.grid;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(230,cy);ctx.lineTo(W-10,cy);ctx.moveTo(cx,10);ctx.lineTo(cx,H-10);ctx.stroke();ctx.fillStyle=C.tick;ctx.fillText('centro (0)',cx+6,cy+16);
+/* trace of the chain's end while t climbs */
+ctx.strokeStyle=C.teal;ctx.lineWidth=2;ctx.beginPath();TR.forEach((e,i)=>i?ctx.lineTo(PX(e[0]),PY(e[1])):ctx.moveTo(PX(e[0]),PY(e[1])));ctx.stroke();
+/* the chain itself */
+for(let i=1;i<pts.length;i++){ctx.strokeStyle=C.blue;ctx.globalAlpha=Math.max(0.25,1-i/90);ctx.lineWidth=i<6?2.4:1.3;ctx.beginPath();ctx.moveTo(PX(pts[i-1][0]),PY(pts[i-1][1]));ctx.lineTo(PX(pts[i][0]),PY(pts[i][1]));ctx.stroke();}ctx.globalAlpha=1;
+const e=eta(sig,t),z=zeta(sig,t),me=Math.hypot(e[0],e[1]),mz=Math.hypot(z[0],z[1]);
+ctx.fillStyle=C.orange;ctx.beginPath();ctx.arc(PX(e[0]),PY(e[1]),6,0,7);ctx.fill();
+const hit=me<0.03||(Math.abs(sig-0.5)<0.004&&Math.min(...ZEROS.map(g=>Math.abs(g-t)))<0.08);if(hit){ctx.strokeStyle=C.orange;ctx.lineWidth=3;ctx.beginPath();ctx.arc(cx,cy,16,0,7);ctx.stroke();ctx.fillStyle=C.orange;ctx.font='600 14px system-ui';ctx.fillText('¡termina en el centro: es un cero!',cx+22,cy-20);}
+setv('e-pt',es(sig,2)+' + '+es(t,2)+'i');
+setv('e-eta',es(me,4),'<b>Final de la cadena alterna</b>'+F('η(s) = 1 − 1/2ˢ + 1/3ˢ − … = '+es(e[0],4)+(e[1]>=0?' + ':' − ')+es(Math.abs(e[1]),4)+'i')+R('Valor exacto de la serie (sumada con aceleración); la cadena dibujada usa 120 flechas y acaba muy cerca.'));
+setv('e-z',es(mz,4),'<b>ζ(s) = η(s) / (1 − 2¹⁻ˢ)</b>'+F('|ζ| = '+es(mz,5))+R('El divisor no se anula dentro de la franja, así que ζ = 0 exactamente cuando η = 0.'));
+$('e-msg').textContent=hit?'En este punto la cadena se cierra sobre el centro: la serie vale 0, y por tanto ζ(s) = 0. Es un cero de Riemann, en la línea ½.':Math.abs(sig-0.5)>0.004?'Fuera de la línea ½ la cadena nunca acaba en el centro, por mucho que subas t: el camino verde da vueltas sin pasar por 0. Eso es lo que la hipótesis afirma para siempre.':'Sube t (o pulsa «Subir por la línea») y mira el camino verde: pasa por el centro justo a las alturas de los ceros.';}
+function stop(){if(anim){cancelAnimationFrame(anim);anim=null;play.textContent='▶ Subir por la línea';}}
+play.onclick=()=>{if(anim){stop();return;}si.value=0.5;let t=+ti.value>=TMAX-0.5?0:+ti.value;play.textContent='❚❚ Pausa';let last=null;const step=(now)=>{const dt=last===null?0.016:Math.min(0.1,(now-last)/1000);last=now;t+=dt*2.5;if(t>=TMAX){t=TMAX;ti.value=t;draw();stop();return;}ti.value=t;draw();anim=requestAnimationFrame(step);};anim=requestAnimationFrame(step);};
+document.querySelectorAll('[data-et]').forEach(b=>b.onclick=()=>{stop();si.value=0.5;ti.value=b.dataset.et;draw();});
+si.addEventListener('input',()=>{stop();draw();});ti.addEventListener('input',()=>{stop();draw();});draw();}
+/* ---------- 9b. spikes at primes from the zeros' oscillations ---------- */
+{const xs=[];for(let x=1.5;x<=13;x+=0.01)xs.push(+x.toFixed(2));const PP=[2,3,5,7,11,13],PW=[4,8,9];
+const f=(x,K)=>{let s=0;for(let k=0;k<K;k++)s-=Math.cos(ZEROS[k]*ln(x));return s;};
+const ch=new Chart($('cSpk'),{data:{datasets:[{type:'line',data:[],borderColor:C.teal,borderWidth:1.6,pointRadius:0},{type:'scatter',data:[],pointRadius:5,pointBackgroundColor:C.orange,pointBorderWidth:0},{type:'scatter',data:[],pointRadius:4,pointBackgroundColor:C.blue,pointBorderWidth:0}]},options:base({scales:{x:ax({min:1.5,max:13,grid:{display:false},ticks:{color:C.tick,stepSize:1},title:{display:true,text:'x',color:C.tick}}),y:ax({min:-10,max:18})}},TT({title:i=>'x = '+es(i[0].parsed.x,2),label:i=>i.datasetIndex===0?'suma = '+es(i.parsed.y,2):i.datasetIndex===1?'primo '+i.parsed.x:'potencia de primo '+i.parsed.x}))});
+const ni=$('k2-n');function draw(){const K=+ni.value;$('k2-no').textContent=K;ch.data.datasets[0].data=xs.map(x=>({x,y:f(x,K)}));ch.data.datasets[1].data=PP.map(p=>({x:p,y:f(p,K)}));ch.data.datasets[2].data=PW.map(p=>({x:p,y:f(p,K)}));ch.update();}
+ni.addEventListener('input',draw);draw();}
+/* gaps */
+const rec=[];let last=2,best=0;for(let n=3;n<=M;n++){if(!sv[n]){const g=n-last;if(g>best){best=g;rec.push({x:last,y:g});}last=n;}}
+const gx=[];for(let k=0.5;k<=6;k+=0.05)gx.push(Math.pow(10,k));
+new Chart($('cGap'),{data:{datasets:[{type:'scatter',data:rec,pointRadius:4,pointBackgroundColor:C.blue,pointBorderWidth:0},{type:'line',data:gx.map(x=>({x,y:Math.sqrt(x)*ln(x)})),borderColor:C.gray,borderWidth:1.5,borderDash:[6,4],pointRadius:0},{type:'line',data:gx.map(x=>({x,y:ln(x)*ln(x)})),borderColor:C.teal,borderWidth:1.5,borderDash:[2,3],pointRadius:0}]},options:base({interaction:{mode:'nearest',intersect:false},scales:{x:ax({type:'logarithmic',min:3,max:M,grid:{display:false},ticks:{color:C.tick,callback:v=>[10,100,1000,10000,100000,1000000].includes(v)?es(v):''}}),y:ax({type:'logarithmic',min:1,max:20000,ticks:{color:C.tick,callback:v=>[1,10,100,1000,10000].includes(v)?es(v):''}})}},TT({title:i=>'p = '+es(i[0].parsed.x,0),label:i=>i.datasetIndex===0?'hueco récord: el siguiente primo está a '+i.parsed.y:i.datasetIndex===1?'√p·ln p = '+es(Math.sqrt(i.parsed.x),1)+' × '+es(ln(i.parsed.x),2)+' = '+es(i.parsed.y,0):'(ln p)² = '+es(ln(i.parsed.x),2)+'² = '+es(i.parsed.y,1)}))});}
+})();
+</script>
+</body>
+</html>
